@@ -1,0 +1,1501 @@
+---
+title: "Inference from Explanation"
+author: "Lara Kirfel, Thomas Icard & Tobias Gerstenberg"
+date: '`r format(Sys.Date(), "%B %d, %Y")`'
+output:
+  bookdown::html_document2:
+    toc: true
+    toc_depth: 4
+    theme: cosmo
+    highlight: tango
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(comment = "#>",
+                      fig.show = "hold")
+```
+
+# Load packages 
+
+```{r, message=FALSE}
+library("knitr")      # for RMarkdown commands 
+library("kableExtra") # for nice tables
+library("janitor")    # for cleaning column names 
+library("brms")       # for Bayesian regression modeling
+library("tidybayes")  # for Bayesian regression modeling
+library("broom")      # for tidy regression results
+library("xtable")     # for latex tables
+library("ggeffects")  # for marginal effects 
+library("tidyverse")  # for data wrangling, visualization, etc. 
+```
+
+```{r}
+# set ggplot theme 
+theme_set(theme_classic())
+```
+
+# Functions 
+
+```{r}
+regression_table = function(fit){
+  fit %>% 
+    tidy() %>% 
+    filter(str_detect(term, "b_")) %>% 
+    mutate(term = str_remove(term, "b_"),
+           term = tolower(term)) %>% 
+    mutate_if(is.numeric, ~ round(., 2)) %>% 
+    rename(`lower 95% CI` = lower,
+           `upper 95% CI` = upper)}
+
+# function for printing out html or latex tables 
+print_table = function(data, format = "html", digits = 2){
+  if(format == "html"){
+    data %>% 
+      kable(digits = digits) %>% 
+      kable_styling()
+  }else if(format == "latex"){
+    data %>% 
+      xtable(digits = digits,
+             caption = "Caption",
+             label = "tab:table") %>%
+      print(include.rownames = F,
+            booktabs = T,
+            sanitize.colnames.function = identity,
+            caption.placement = "top")
+  }
+}
+```
+
+# Experiment 1: Normality inference
+
+## Read in data 
+
+```{r}
+# CONJUNCTIVE STRUCTURE: STATISTICAL NORMS 
+df.stat_con_data = read.csv(file = "../../data/learning_language_conjunctive_main.csv",
+                   stringsAsFactors = F) %>% 
+  filter(row_number() > 2) %>% # additional rows in qualtrics csv
+  clean_names() %>% 
+  filter(!status == "Survey Preview", #exclude preview trials, 
+         !ethnicity == "") #exclude people who did not make it until demographics, i.e. incomplete data
+
+# Reference clip in final test clip: dark motion block is at the top 
+# in test clip (Recode condition "db")
+# Reference slider: picture with dark block at the top is on the right 
+# of the slider (0-"Normal", 100 "Abnormal") (Recode condition "1 and "4"")
+df.stat_con_judgments = df.stat_con_data %>% 
+  mutate(participant = 1:n()) %>% 
+  select(dt_ball_a_1:b_dark_top_right_1, contains("dark_thru"), condition, participant) %>% 
+  pivot_longer(cols = -c(participant, condition),
+               names_to = "index",
+               values_to = "value") %>% 
+  filter(value != "") %>% 
+  mutate(index = ifelse(str_detect(index, "conjunctive"),
+                        "conjunctive",
+                        index),
+         position = str_extract_all(index, "db|dt"),
+         index = ifelse(str_detect(index, "thru"),
+                        "selection",
+                        index),
+         index = ifelse(str_detect(index, "top"),
+                        "judgment",
+                        index),
+         index = str_remove(index, "db_"),
+         index = str_remove(index, "dt_"),
+         index = str_remove(index, "_1"),
+         value = ifelse(value == "Ball E did go through the gate because ball A did go through the motion block.",
+                        "1",
+                        ifelse(value == "Ball E did go through the gate because ball B did go through the motion block.",
+                               2,
+                               value))) %>% 
+  mutate(value = as.numeric(value),
+         value = ifelse(test = (position == "db" & str_detect(index, "ball")),
+                        yes = 100 - value,
+                        no = value),
+         value = ifelse((position == "db" & str_detect(index, "selection")),
+                        3 - value,
+                        value)) %>% 
+  select(-position) %>% 
+  pivot_wider(names_from = index,
+              values_from = value) %>% 
+  mutate(selection = factor(selection,
+                            levels = 1:2,
+                            labels = c("abnormal", "normal"))) %>%
+  mutate(judgment = ifelse(condition %in% c(1, 4),
+                           100 - judgment,
+                           judgment)) %>% 
+  rename(ball_abnormal = ball_a,
+         ball_normal = ball_b) %>% 
+  arrange(participant) %>% 
+  # define exclusion criteria 
+  mutate(exclude = ifelse((ball_abnormal < ball_normal) & 
+         (conjunctive < 50), 0, 1))
+
+# CONJUNCTIVE STRUCTURE: PRESCRIPTIVE NORMS 
+df.pres_con_data = read.csv(file = "../../data/prescriptive_conjunctive_main.csv",
+                   stringsAsFactors = F) %>% 
+  filter(row_number() > 2) %>% # additional rows in qualtrics csv
+  clean_names() %>% 
+  filter(!status == "Survey Preview", #exclude preview trials, 
+         !ethnicity == "") #exclude people who did not make until demographics, i.e. incomplete survey
+
+# reference clip: 
+# Billy is the abnormal agent, Suzy the normal agent (Recode norm_condition "2")
+# The selected agent as the abnormal agent is at the top of the 
+# judgment scale ( Recode learn_condition ="2")
+
+df.pres_con_judgments = df.pres_con_data %>% 
+  mutate(participant = 1:n()) %>% 
+  select(b_abnorm_billy_1:suzy_b_abnorm_right_1,
+         learn_condition,
+         condition,
+         participant,
+         -starts_with("q"),
+         -starts_with("timing")) %>% 
+  pivot_longer(cols = -c(participant, learn_condition, condition),
+               names_to = "index",
+               values_to = "value") %>%
+  filter(value != "") %>%
+  mutate(index = ifelse(str_detect(index, "left|right"),
+                        "judgment",
+                        index))%>% 
+  mutate(index = ifelse(str_detect(index, "b_abnorm_billy_1|s_abnorm_billy_1"),
+                        "agreement_Billy",
+                        index))%>% 
+  mutate(index = ifelse(str_detect(index, "b_abnorm_suzy_1|s_abnorm_suzy_1"),
+                        "agreement_Suzy",
+                        index))%>% 
+  mutate(index = ifelse(str_detect(index, "conjunctive"),
+                        "conjunctive",
+                        index))%>% 
+  mutate(index = ifelse(str_detect(index, "selection"),
+                        "selection",
+                        index))%>% 
+  mutate(value = as.numeric(value),
+         value = ifelse(test = (learn_condition == "2" & str_detect(index, "agreement")),
+                        yes = 100 - value,
+                        no = value),
+         value = ifelse((learn_condition == "2" & str_detect(index, "selection")),
+                        3 - value,
+                        value))%>% 
+  pivot_wider(names_from = index,
+              values_from = value) %>% 
+  mutate(selection = factor(selection,
+                            levels = 1:2,
+                            labels = c("abnormal", "normal"))) %>%
+  mutate(judgment = ifelse(condition %in% c(1, 4),
+                           100 - judgment,
+                           judgment)) %>% 
+  rename(agreement_abnormal_agent = agreement_Billy,
+         agreement_normal_agent = agreement_Suzy) %>% 
+  arrange(participant) %>% 
+  # define exclusion criteria 
+  mutate(exclude = ifelse((agreement_abnormal_agent < agreement_normal_agent) &
+         (conjunctive < 50), 0, 1))
+
+# DISJUNCTIVE STRUCTURE: STATISTICAL NORMS 
+df.stat_dis_data = read.csv(file = "../../data/learning_language_disjunctive_main.csv",
+                   stringsAsFactors = F) %>% 
+  filter(row_number() > 2) %>% # additional rows in qualtrics csv
+  clean_names() %>% 
+  filter(!status == "Survey Preview", # exclude preview trials, 
+         !ethnicity == "") # exclude people who did not make until it demographics
+
+# Reference clip in final test clip: dark motion block is at the top in 
+# test clip (Recode condition "db")
+# Reference slider: picture with dark block at the top is on the right of 
+# the slider (0-"Normal", 100 "Abnormal") (Recode condition "1 and "4"")
+df.stat_dis_judgments = df.stat_dis_data %>% 
+  mutate(participant = 1:n()) %>% 
+  select(dt_ball_a_1:b_dark_top_right_1,
+         contains("dark_thru"),
+         condition,
+         participant) %>% 
+  pivot_longer(cols = -c(participant, condition),
+               names_to = "index",
+               values_to = "value") %>%
+  filter(value != "") %>% 
+  mutate(index = ifelse(str_detect(index, "disjunctive"),
+                        "disjunctive",
+                        index),
+         position = str_extract_all(index, "db|dt"),
+         index = ifelse(str_detect(index, "thru"),
+                        "selection",
+                        index),
+         index = ifelse(str_detect(index, "top"),
+                        "judgment",
+                        index),
+         index = str_remove(index, "db_"),
+         index = str_remove(index, "dt_"),
+         index = str_remove(index, "_1"),
+         value = ifelse(value == "Ball E did go through the gate because ball A did go through the motion block.",
+                        "1",
+                        ifelse(value == "Ball E did go through the gate because ball B did go through the motion block.",
+                               2,
+                               value))) %>% 
+  mutate(value = as.numeric(value),
+         value = ifelse(test = (position == "db" & str_detect(index, "ball")),
+                        yes = 100 - value,
+                        no = value),
+         value = ifelse((position == "db" & str_detect(index, "selection")),
+                        3 - value,
+                        value)) %>% 
+  select(-position) %>% 
+  pivot_wider(names_from = index,
+              values_from = value) %>% 
+  mutate(selection = factor(selection,
+                            levels = 1:2,
+                            labels = c("abnormal", "normal"))) %>%
+  mutate(judgment = ifelse(condition %in% c(1, 4),
+                           100 - judgment,
+                           judgment)) %>% 
+  rename(ball_abnormal = ball_a,
+         ball_normal = ball_b) %>% 
+  arrange(participant) %>% 
+  # define exclusion criteria 
+  mutate(exclude = ifelse((ball_abnormal < ball_normal) & 
+         (disjunctive > 50), 0, 1))
+
+# DISJUNCTIVE STRUCTURE: PRESCRIPTIVE NORMS 
+df.pres_dis_data = read.csv(file = "../../data/prescriptive_disjunctive_main.csv",
+                   stringsAsFactors = F) %>% 
+  filter(row_number() > 2) %>% # additional rows in qualtrics csv
+  clean_names() %>% 
+  filter(!status == "Survey Preview", #exclude preview trials, 
+         !age == "") #exclude people who did not make until demographics
+
+# reference clip: 
+# Billy is the abnormal agent, Suzy the normal agent (Recode norm_condition "2")
+# The selected agent as the abnormal agent is at the top of the 
+# judgment scale (100) ( Recode learn_condition ="2")
+
+df.pres_dis_judgments = df.pres_dis_data %>% 
+  mutate(participant = 1:n()) %>% 
+  select(b_abnorm_billy_1:suzy_b_abnorm_right_1,
+         learn_condition,
+         condition,
+         participant,
+         -starts_with("q"),
+         -starts_with("timing")) %>% 
+  pivot_longer(cols = -c(participant, learn_condition, condition),
+               names_to = "index",
+               values_to = "value") %>%
+  filter(value != "") %>%
+  mutate(index = ifelse(str_detect(index, "left|right"),
+                        "judgment",
+                        index))%>% 
+  mutate(index = ifelse(str_detect(index, "b_abnorm_billy_1|s_abnorm_billy_1"),
+                        "agreement_Billy",
+                        index))%>% 
+  mutate(index = ifelse(str_detect(index, "b_abnorm_suzy_1|s_abnorm_suzy_1"),
+                        "agreement_Suzy",
+                        index))%>% 
+  mutate(index = ifelse(str_detect(index, "disjunctive"),
+                        "disjunctive",
+                        index))%>% 
+  mutate(index = ifelse(str_detect(index, "selection"),
+                        "selection",
+                        index))%>% 
+  mutate(value = as.numeric(value),
+         value = ifelse(test = (learn_condition == "2" & str_detect(index, "agreement")),
+                        yes = 100 - value,
+                        no = value),
+         value = ifelse((learn_condition == "2" & str_detect(index, "selection")),
+                        3 - value,
+                        value))%>% 
+  pivot_wider(names_from = index,
+              values_from = value) %>% 
+  mutate(selection = factor(selection,
+                            levels = 1:2,
+                            labels = c("abnormal", "normal"))) %>%
+  mutate(judgment = ifelse(condition %in% c(1, 4),
+                           100 - judgment,
+                           judgment)) %>% 
+  rename(agreement_abnormal_agent = agreement_Billy,
+         agreement_normal_agent = agreement_Suzy) %>% 
+  arrange(participant) %>% 
+  # define exclusion criteria
+  mutate(exclude = ifelse((agreement_abnormal_agent < agreement_normal_agent) &
+         (disjunctive > 50), 0, 1))
+
+# COMBINE THE DATA 
+df.normality = df.stat_con_judgments %>% 
+  mutate(structure = "conjunctive") %>% 
+  rename(structure_question = conjunctive) %>% 
+  bind_rows(df.stat_dis_judgments %>% 
+              mutate(structure = "disjunctive") %>% 
+              rename(structure_question = disjunctive)) %>% 
+  mutate(norm = "statistical") %>% 
+  rename(abnormal_rating = ball_abnormal, 
+         normal_rating = ball_normal, 
+         structure_rating = structure_question) %>% 
+  bind_rows(df.pres_con_judgments %>% 
+              mutate(structure = "conjunctive") %>% 
+              rename(structure_question = conjunctive) %>% 
+              bind_rows(df.pres_dis_judgments %>% 
+                          mutate(structure = "disjunctive") %>% 
+                          rename(structure_question = disjunctive)) %>% 
+              mutate(norm = "prescriptive") %>% 
+              rename(abnormal_rating = agreement_abnormal_agent, 
+                     normal_rating = agreement_normal_agent,
+                     structure_rating = structure_question) %>% 
+              select(- learn_condition)) %>% 
+  filter(exclude == 0) %>% # filter based on exclusion criteria
+  mutate(participant = 1:n()) %>% 
+  select(-condition)
+```
+
+## Demographics 
+
+```{r}
+df.normality.demo = df.stat_con_data %>% 
+  select(feedback,
+         age_1_text,
+         gender,
+         race_1_text,
+         ethnicity) %>% 
+  mutate(norm = "statistical",
+         structure = "conjunctive",
+         participant = 1:n()) %>% 
+  left_join(df.stat_con_judgments %>% 
+              select(participant, exclude),
+            by = "participant") %>% 
+  bind_rows(df.stat_dis_data %>% 
+              select(feedback,
+                     age_1_text,
+                     gender,
+                     race_1_text,
+                     ethnicity) %>% 
+              mutate(norm = "statistical",
+                     structure = "disjunctive",
+                     participant = 1:n()) %>% 
+              left_join(df.stat_dis_judgments %>% 
+                          select(participant, exclude),
+                        by = "participant")) %>% 
+  bind_rows(df.pres_con_data %>% 
+              select(feedback,
+                     age_1_text,
+                     gender,
+                     race_1_text,
+                     ethnicity) %>% 
+              mutate(norm = "prescriptive",
+                     structure = "conjunctive",
+                     participant = 1:n()) %>% 
+              left_join(df.pres_con_judgments %>% 
+                          select(participant, exclude),
+                        by = "participant")) %>% 
+  bind_rows(df.pres_dis_data %>% 
+              select(feedback,
+                     age_1_text,
+                     gender,
+                     race_1_text,
+                     ethnicity) %>% 
+              mutate(norm = "prescriptive",
+                     structure = "disjunctive",
+                     participant = 1:n()) %>% 
+              left_join(df.pres_dis_judgments %>% 
+                          select(participant, exclude),
+                        by = "participant")) %>% 
+  mutate(age = as.numeric(age_1_text),
+         age = ifelse(age > 1000, 2019 - age, age),
+         gender = ifelse(gender == 1, "Female", gender),
+         gender = ifelse(gender == 2, "Male", gender),
+         gender = ifelse(gender == 3, "Non-binary", gender),
+         gender = ifelse(gender == 4, "Prefer not to say.", gender))
+
+df.normality.demo %>% 
+  summarize(n_excluded = sum(exclude == 1))
+
+df.normality.demo %>% 
+  filter(exclude == 0) %>%
+  count(norm, structure)
+
+df.normality.demo %>% 
+  summarize(n_total = n(),
+            n_female = sum(gender == "Female"),
+            n_male = sum(gender == "Male"),
+            n_not_say = sum(gender == "Prefer not to say."),
+            n_non_binary = sum(gender == "Non-binary"),
+            mean_age = mean(age, na.rm = T),
+            sd_age = sd(age, na.rm = T)) %>% 
+  mutate_at(vars(contains("age")), round)
+
+# remove unnecessary variables
+rm(list = ls()[!ls() %in% c("df.normality",
+                            "df.normality.demo",
+                            "regression_table",
+                            "print_table")])
+```
+
+## Plots 
+
+### Causal selections 
+
+```{r fig.height=6, fig.width=8}
+set.seed(1)
+
+df.plot = df.normality %>% 
+  mutate(selection = ifelse(selection == "abnormal", 1, 0),
+         norm = factor(norm,
+                       levels = c("statistical", "prescriptive"),
+                       labels = c("statistical\nnorm", "prescriptive\nnorm")))
+  
+df.text = df.plot %>% 
+  count(structure, norm) %>% 
+  mutate(label = str_c("N = ", n),
+         selection = 1.05)
+
+ggplot(data = df.plot,
+       # mapping = aes(x = condition, 
+       mapping = aes(x = norm, 
+                     y = selection,
+                     group = structure,
+                     fill = structure)) +
+  geom_hline(yintercept = 0.5, 
+             linetype = 2) + 
+  stat_summary(fun.data = "mean_cl_boot",
+               geom = "pointrange",
+               position = position_dodge(width = 0.5),
+               size = 1.5,
+               shape = 21) + 
+  annotate(x = c(0.52, 0.52),
+           y = c(0, 1),
+           geom = "text",
+           label = c("normal\ncause", "abnormal\ncause"),
+           hjust = c(0, 1),
+           angle = 90,
+           size = 7) +
+  geom_text(data = df.text,
+            mapping = aes(label = label),
+            position = position_dodge(width = 0.5),
+            size = 6) +
+  labs(x = "type of norm",
+       y = "% abnormal cause selections") +
+  scale_fill_brewer(palette = "Set1") +
+  scale_y_continuous(breaks = seq(0, 1, 0.25),
+                     labels = seq(0, 1, 0.25),
+                     limits = c(0, 1.05)) +
+  theme(text = element_text(size = 24),
+        legend.position = "bottom",
+        axis.title.x = element_blank())
+
+ggsave("../../figures/plots/normality_selections.pdf",
+       width = 8,
+       height = 6)
+```
+
+### Main judgment data 
+
+```{r fig.height=6, fig.width=8}
+set.seed(1)
+
+df.plot = df.normality %>% 
+  mutate(participant = 1:n(),
+         norm = factor(norm,
+                       levels = c("statistical", "prescriptive"),
+                       labels = c("statistical\nnorm", "prescriptive\nnorm")),
+         judgment = judgment - 50)
+
+df.text = df.plot %>% 
+  count(structure, norm) %>% 
+  mutate(label = str_c("N = ", n),
+         judgment = 55)
+
+ggplot(data = df.plot,
+       mapping = aes(x = norm, 
+                     y = judgment,
+                     group = structure,
+                     fill = structure)) +
+  geom_hline(yintercept = 0, 
+             linetype = 2) + 
+  geom_point(mapping = aes(color = structure), 
+             alpha = 0.2,
+             size = 2,
+             position = position_jitterdodge(jitter.width = 0.1,
+                                             dodge.width = 0.5),
+             show.legend = F) + 
+  stat_summary(fun.data = "mean_cl_boot",
+               geom = "pointrange",
+               position = position_dodge(width = 0.5),
+               size = 1.5,
+               shape = 21) + 
+  annotate(x = c(0.5, 0.5),
+           y = c(-50, 50),
+           geom = "text",
+           label = c("preference for\nnormal event", "preference for\nabnormal event"),
+           hjust = c(0, 1),
+           angle = 90,
+           size = 6) + 
+  geom_text(data = df.text,
+            mapping = aes(label = label),
+            position = position_dodge(width = 0.5),
+            size = 5) + 
+  labs(x = "type of norm",
+       y = "normality inference") + 
+  scale_fill_brewer(palette = "Set1") +
+  scale_color_brewer(palette = "Set1") +
+  scale_y_continuous(breaks = seq(-50, 50, 25),
+                     labels = seq(-50, 50, 25),
+                     limits = c(-50, 55)) + 
+  theme(text = element_text(size = 24),
+        legend.position = "bottom",
+        axis.title.x = element_blank())
+
+ggsave("../../figures/plots/normality_judgments.pdf",
+       width = 8,
+       height = 6)
+```
+
+### Individual differences
+
+```{r fig.height=6, fig.width=8}
+set.seed(1)
+
+df.plot = df.normality %>% 
+  mutate(judgment = judgment - 50,
+         selection = str_c(selection, "\nselection"))
+
+df.text = df.plot %>% 
+  count(selection, structure) %>% 
+  mutate(judgment = 55,
+         label = str_c("n = ", n))
+
+  ggplot(data = df.plot,
+         mapping = aes(x = selection, 
+                     y = judgment,
+                     group = structure,
+                     fill = structure)) +
+  geom_hline(yintercept = 0, 
+             linetype = 2) + 
+  geom_point(mapping = aes(color = structure),
+    alpha = 0.2,
+             size = 2,
+             position = position_jitterdodge(jitter.width = 0.1,
+                                             dodge.width = 0.5),
+             show.legend = F) + 
+  stat_summary(fun.data = "mean_cl_boot",
+               geom = "pointrange",
+               position = position_dodge(width = 0.5),
+               size = 1.5,
+               shape = 21) + 
+  annotate(x = c(0.5, 0.5),
+           y = c(-50, 50),
+           geom = "text",
+           label = c("preference for\nnormal event", "preference for\nabnormal event"),
+           hjust = c(0, 1),
+           angle = 90,
+           size = 6) + 
+  geom_text(data = df.text,
+            mapping = aes(label = label),
+            position = position_dodge(width = 0.5),
+            size = 5) +
+  labs(x = "type of norm",
+       y = "normality inference") + 
+  scale_fill_brewer(palette = "Set1") +
+  scale_color_brewer(palette = "Set1") +
+  scale_y_continuous(breaks = seq(-50, 50, 25),
+                     labels = seq(-50, 50, 25),
+                     limits = c(-50, 55)) + 
+  theme(text = element_text(size = 24),
+        legend.position = "bottom",
+        axis.title.x = element_blank())
+
+ggsave("../../figures/plots/normality_judgments_based_on_selections.pdf",
+       width = 8,
+       height = 6)
+```
+
+## Stats 
+
+### Bayesian regression on selection data
+
+```{r}
+fit_normality_selection = brm(formula = selection ~ structure * norm,
+                                   family = "bernoulli",
+                                   data = df.normality %>% 
+                                     mutate(selection = ifelse(selection == "normal", 0, 1)),
+                                   seed = 1,
+                                   cores = 2,
+                                   file = "cache/fit_normality_selection")
+
+fit_normality_selection
+```
+
+Predictions on probability scale: 
+
+```{r}
+fit_normality_selection %>% 
+  ggpredict(terms = c("structure", "norm"))
+```
+
+```{r}
+df.normality %>% 
+  count(structure, norm, selection) %>% 
+  group_by(structure, norm) %>% 
+  mutate(perc = n/sum(n)) %>% 
+  filter(selection == "abnormal")
+```
+
+### Bayesian regression on judgment data
+
+```{r}
+fit_normality_judgment = brm(formula = judgment ~ structure * norm,
+                                  data = df.normality,
+                                  seed = 1,
+                                  cores = 2,
+                                  file = "cache/fit_normality_judgment")
+
+fit_normality_judgment
+```
+
+### Judgments different from chance? 
+
+- double check that this is correct
+
+```{r}
+fit_normality_judgment %>% 
+  posterior_samples() %>% 
+  clean_names() %>% 
+  mutate(disjunctive = b_intercept + b_structuredisjunctive) %>% 
+  pull(disjunctive) %>% 
+  mean_hdci()
+```
+
+## Tables
+
+### Causal selections 
+
+```{r}
+regression_table(fit_normality_selection) %>% 
+  print_table()
+```
+
+### Normality judgments 
+
+```{r}
+regression_table(fit_normality_judgment) %>% 
+  print_table()
+```
+
+### Relationship between selections and normality inference 
+
+```{r}
+df.normality %>% 
+  mutate(judgment_binary = ifelse(judgment < 50, "normal", "abnormal")) %>% 
+  group_by(structure, norm) %>% 
+  summarize(selection = sum(selection == "abnormal")/n(),
+            inference = sum(judgment_binary == "abnormal")/n()) %>% 
+  select(norm, structure, everything()) %>% 
+  arrange(desc(norm), structure) %>% 
+  ungroup() %>% 
+  mutate_if(is.numeric, ~ round(.,2)) %>% 
+  print_table()
+```
+
+# Experiment 2: Structure inference
+
+## Read in data 
+
+```{r}
+# ABNORMAL EXPLANATION: STATISTICAL NORM 
+df.stat_abnormal_data = read.csv(file = "../../data/learning_language_abnormal_main.csv",
+                   stringsAsFactors = F) %>% 
+  filter(row_number() > 2) %>% # additional rows in qualtrics csv
+  clean_names() %>% 
+  filter(!status == "Survey Preview", # exclude preview trials, 
+         !ethnicity == "") # exclude people who did not make until it demographics
+
+# Reference clip Learning Trial and Judgment: Dark Motion Block is top, Ball A 
+# is abnormal (Recode values of DB condition)
+# Reference Slider: Conjunctive on the right side (100 - Definitely Conjunctive, 
+# 0 - Definitely Disjunctive) (Recode Conj_Left Condition)
+
+df.stat_abnormal_judgments = df.stat_abnormal_data %>% 
+  mutate(participant = 1:n()) %>% 
+  select(conj_a_db_1,
+         conj_b_db_1,
+         conj_db_1,
+         conj_a_dt_1,
+         conj_b_dt_1,
+         conj_dt_1,
+         disj_a_db_1,
+         disj_b_db_1,
+         disj_db_1,
+         disj_a_dt_1,
+         disj_b_dt_1,
+         disj_dt_1,
+         exp_conj_db,
+         exp_conj_dt,
+         exp_disj_db,
+         exp_disj_dt,
+         abnormal_b_conj_left_1,
+         abnormal_b_con_right_1,
+         abnormal_a_conj_left_1,
+         abnormal_b_con_righ_1,
+         condition,
+         structure,
+         participant) %>% 
+  pivot_longer(cols = -c(participant, condition, structure),
+               names_to = "index",
+               values_to = "value") %>%
+  filter(value != "") %>% 
+  mutate(index = ifelse(str_detect(index, "abnormal"),
+                        "judgment",
+                        index))%>% 
+  mutate(index = ifelse(str_detect(index, "conj_a_db_1|conj_a_dt_1"),
+                        "conjunctive_ball_a",
+                        index))%>% 
+  mutate(index = ifelse(str_detect(index, "conj_b_db_1|conj_b_dt_1"),
+                        "conjunctive_ball_b",
+                        index))%>% 
+  mutate(index = ifelse(str_detect(index, "conj_db_1|conj_dt_1"),
+                        "conjunctive",
+                        index))%>% 
+  mutate(index = ifelse(str_detect(index, "disj_a_db_1|disj_a_dt_1"),
+                        "disjunctive_ball_a",
+                        index))%>% 
+  mutate(index = ifelse(str_detect(index, "disj_b_db_1|disj_b_dt_1"),
+                        "disjunctive_ball_b",
+                        index))%>% 
+  mutate(index = ifelse(str_detect(index, "disj_db_1|disj_dt_1"),
+                        "disjunctive",
+                        index))%>% 
+  mutate(index = ifelse(str_detect(index, "exp_conj_db|exp_conj_dt"),
+                        "conjunctive_selection",
+                        index))%>% 
+  mutate(index = ifelse(str_detect(index, "exp_disj_db|exp_disj_dt"),
+                        "disjunctive_selection",
+                        index))%>%
+  mutate(value = as.numeric(value),
+         value = ifelse(test = (condition == "DB" & str_detect(index, "ball")),
+                        yes = 100 - value,
+                        no = value),
+         value = ifelse((condition == "DB" & str_detect(index, "selection")),
+                        3 - value,
+                        value)) %>% 
+  pivot_wider(names_from = index,
+              values_from = value) %>% 
+  mutate(conjunctive_selection = factor(conjunctive_selection,
+                            levels = 1:2,
+                            labels = c("abnormal", "normal")))%>% 
+  mutate(disjunctive_selection = factor(disjunctive_selection,
+                            levels = 1:2,
+                            labels = c("abnormal", "normal")))%>%
+  mutate(judgment = ifelse(structure =="Conj_Left",
+                           100 - judgment,
+                           judgment)) %>% 
+  rename(conjunctive_ball_abnormal = conjunctive_ball_a,
+        conjunctive_ball_normal = conjunctive_ball_b,
+        disjunctive_ball_abnormal = disjunctive_ball_a,
+        disjunctive_ball_normal = disjunctive_ball_b) %>% 
+  arrange(participant) %>% 
+  # define exclusion criteria 
+  mutate(exclude = ifelse((conjunctive_ball_abnormal < conjunctive_ball_normal) &
+         (disjunctive_ball_abnormal < disjunctive_ball_normal) & 
+         (conjunctive < 50) &
+         (disjunctive > 50), 0, 1))
+
+# ABNORMAL EXPLANATION: PRESCRIPTIVE NORM 
+df.pres_abnormal_data = read.csv(file = "../../data/prescriptive_abnormal_main.csv",
+                   stringsAsFactors = F) %>% 
+  filter(row_number() > 2) %>% # additional rows in qualtrics csv
+  clean_names() %>% 
+  filter(!status == "Survey Preview", #exclude preview trials, 
+         !ethnicity == "") # exclude people who did not make until demographics
+
+# reference clip: 
+# Billy is the abnormal agent (Recode Norm Condition ="2")
+# Cojunctive Structure is at the top scale (100) (Recode ConjLeft Condition)
+
+df.pres_abnormal_judgments = df.pres_abnormal_data %>% 
+  mutate(participant = 1:n()) %>% 
+  select(b_abnorm_conj_billy1_1:s_selected_conj_right_1,
+         structure,
+         norm_condition,
+         participant,
+         -starts_with("x45"),
+         -starts_with("s89"),
+         -starts_with("q"),
+         -starts_with("check"),
+         -starts_with("timing")) %>% 
+  pivot_longer(cols = -c(participant, structure, norm_condition),
+               names_to = "index",
+               values_to = "value") %>%
+  filter(value != "") %>%
+  mutate(index = ifelse(str_detect(index, "selected"),
+                        "judgment",
+                        index))%>% 
+  mutate(index = ifelse(str_detect(index, "b_abnorm_conj_billy|s_abnorm_conj_billy"),
+                        "conjunctive_agreement_billy",
+                        index))%>% 
+  mutate(index = ifelse(str_detect(index, "b_abnorm_conj_suzy|s_abnorm_conj_suzy"),
+                        "conjunctive_agreement_suzy",
+                        index))%>%
+  mutate(index = ifelse(str_detect(index, "b_abnorm_conjunctive|s_abnorm_conjunctive"),
+                        "conjunctive",
+                        index))%>%
+  mutate(index = ifelse(str_detect(index, "b_abnorm_conj_exp|s_abnorm_conj_exp"),
+                        "conjunctive_selection",
+                        index))%>%
+  mutate(index = ifelse(str_detect(index, "b_abnorm_disj_billy|s_abnorm_disj_billy"),
+                        "disjunctive_agreement_billy",
+                        index))%>% 
+  mutate(index = ifelse(str_detect(index, "b_abnorm_disj_suzy|s_abnorm_disj_suzy"),
+                        "disjunctive_agreement_suzy",
+                        index))%>%
+  mutate(index = ifelse(str_detect(index, "b_abnorm_disjunctive|s_abnorm_disjunctive"),
+                        "disjunctive",
+                        index))%>%
+  mutate(index = ifelse(str_detect(index, "b_abnorm_disj_exp|s_abnorm_disj_exp"),
+                        "disjunctive_selection",
+                        index))%>%
+  mutate(value = as.numeric(value),
+         value = ifelse(test = (norm_condition == "2" & str_detect(index, "agreement")),
+                        yes = 100 - value,
+                        no = value),
+         value = ifelse((norm_condition == "2" & str_detect(index, "selection")),
+                        3 - value,
+                        value))%>% 
+  pivot_wider(names_from = index,
+              values_from = value) %>% 
+  mutate(conjunctive_selection = factor(conjunctive_selection,
+                            levels = 1:2,
+                            labels = c("abnormal", "normal"))) %>%
+  mutate(disjunctive_selection = factor(disjunctive_selection,
+                            levels = 1:2,
+                            labels = c("abnormal", "normal")))%>%
+  mutate(judgment = ifelse(structure =="ConjLeft",
+                           100 - judgment,
+                           judgment)) %>% 
+  rename(conjunctive_agent_abnormal = conjunctive_agreement_billy,
+        conjunctive_agent_normal = conjunctive_agreement_suzy,
+        disjunctive_agent_abnormal = disjunctive_agreement_billy,
+        disjunctive_agent_normal = disjunctive_agreement_suzy) %>% 
+  arrange(participant) %>% 
+  # define exclusion criteria
+  mutate(exclude = ifelse(
+    test = (conjunctive_agent_abnormal < conjunctive_agent_normal) &
+         (disjunctive_agent_abnormal < disjunctive_agent_normal) &
+         (conjunctive < 50) &
+         (disjunctive > 50),
+    yes = 0, 
+    no = 1))
+
+# NORMAL EXPLANATION: STATISTICAL NORMS 
+df.stat_normal_data = read.csv(file = "../../data/learning_language_normal_main.csv",
+                   stringsAsFactors = F) %>% 
+  filter(row_number() > 2) %>% # additional rows in qualtrics csv
+  clean_names() %>% 
+  filter(!status == "Survey Preview", # exclude preview trials, 
+         !ethnicity == "") # exclude people who did not make until it demographics, i.e. incomplete data
+
+# Reference clip Learning Trial and Judgment: Dark Motion Block is top, Ball A is abnormal 
+# (Recode values of DB condition)
+# Reference Slider: Conjunctive on the right side (100 - Definitely Conjunctive, 
+# 0 - Definitely Disjunctive) (Recode Conj_Left Condition)
+df.stat_normal_judgments = df.stat_normal_data %>% 
+  mutate(participant = 1:n()) %>% 
+  select(conj_a_db_1,
+         conj_b_db_1,
+         conj_db_1,
+         conj_a_dt_1,
+         conj_b_dt_1,
+         conj_dt_1,
+         disj_a_db_1,
+         disj_b_db_1,
+         disj_db_1,
+         disj_a_dt_1,
+         disj_b_dt_1,
+         disj_dt_1,
+         exp_conj_db,
+         exp_conj_dt,
+         exp_disj_db,
+         exp_disj_dt,
+         normal_a_conj_left_1,
+         normal_a_con_right_1,
+         normal_b_conj_left_1,
+         normal_b_con_right_1,
+         condition,
+         structure,
+         participant) %>% 
+  pivot_longer(cols = -c(participant, condition, structure),
+               names_to = "index",
+               values_to = "value") %>%
+  filter(value != "") %>% 
+  mutate(index = ifelse(str_detect(index, "normal"),
+                        "judgment",
+                        index))%>% 
+  mutate(index = ifelse(str_detect(index, "conj_a_db_1|conj_a_dt_1"),
+                        "conjunctive_ball_a",
+                        index))%>% 
+  mutate(index = ifelse(str_detect(index, "conj_b_db_1|conj_b_dt_1"),
+                        "conjunctive_ball_b",
+                        index))%>% 
+  mutate(index = ifelse(str_detect(index, "conj_db_1|conj_dt_1"),
+                        "conjunctive",
+                        index))%>% 
+  mutate(index = ifelse(str_detect(index, "disj_a_db_1|disj_a_dt_1"),
+                        "disjunctive_ball_a",
+                        index))%>% 
+  mutate(index = ifelse(str_detect(index, "disj_b_db_1|disj_b_dt_1"),
+                        "disjunctive_ball_b",
+                        index))%>% 
+  mutate(index = ifelse(str_detect(index, "disj_db_1|disj_dt_1"),
+                        "disjunctive",
+                        index))%>% 
+  mutate(index = ifelse(str_detect(index, "exp_conj_db|exp_conj_dt"),
+                        "conjunctive_selection",
+                        index))%>% 
+  mutate(index = ifelse(str_detect(index, "exp_disj_db|exp_disj_dt"),
+                        "disjunctive_selection",
+                        index))%>%
+  mutate(value = as.numeric(value),
+         value = ifelse(test = (condition == "DB" & str_detect(index, "ball")),
+                        yes = 100 - value,
+                        no = value),
+         value = ifelse((condition == "DB" & str_detect(index, "selection")),
+                        3 - value,
+                        value)) %>% 
+  pivot_wider(names_from = index,
+              values_from = value) %>% 
+  mutate(conjunctive_selection = factor(conjunctive_selection,
+                            levels = 1:2,
+                            labels = c("abnormal", "normal")))%>% 
+  mutate(disjunctive_selection = factor(disjunctive_selection,
+                            levels = 1:2,
+                            labels = c("abnormal", "normal")))%>%
+  mutate(judgment = ifelse(structure =="Conj_Left",
+                           100 - judgment,
+                           judgment)) %>% 
+  rename(conjunctive_ball_abnormal = conjunctive_ball_a,
+        conjunctive_ball_normal = conjunctive_ball_b,
+        disjunctive_ball_abnormal = disjunctive_ball_a,
+        disjunctive_ball_normal = disjunctive_ball_b) %>% 
+  arrange(participant) %>% 
+  # define exclusion criteria 
+  mutate(exclude = ifelse((conjunctive_ball_abnormal < conjunctive_ball_normal) &
+         (disjunctive_ball_abnormal < disjunctive_ball_normal) & 
+         (conjunctive < 50) &
+         (disjunctive > 50), 0, 1))
+
+# NORMAL EXPLANATION: PRESCRIPTIVE NORMS 
+df.pres_normal_data = read.csv(file = "../../data/prescriptive_normal_main.csv",
+                   stringsAsFactors = F) %>% 
+  filter(row_number() > 2) %>% # additional rows in qualtrics csv
+  clean_names() %>% 
+  filter(!status == "Survey Preview", # exclude preview trials, 
+         !ethnicity == "") # exclude people who did not make until demographics
+
+# reference clip: 
+# Billy is the abnormal agent, Suzy the normal agent (recode Norm Condition 2)
+# Cojunctive Structure is at the top scale (100) (Recode Structure Condition 'ConjLeft')
+
+df.pres_normal_judgments = df.pres_normal_data %>% 
+  mutate(participant = 1:n()) %>% 
+  select(s_norm_conj_billy1_1:b_selected_conj_right_1,
+         structure,
+         norm_condition,
+         participant,
+         -starts_with("x45"),
+         -starts_with("s89"),
+         -starts_with("q"),
+         -starts_with("check"),
+         -starts_with("timing")) %>% 
+  pivot_longer(cols = -c(participant, structure, norm_condition),
+               names_to = "index",
+               values_to = "value") %>%
+  filter(value != "") %>%
+  mutate(index = ifelse(str_detect(index, "selected"),
+                        "judgment",
+                        index))%>% 
+  mutate(index = ifelse(str_detect(index, "s_norm_conj_billy|b_norm_conj_billy"),
+                        "conjunctive_agreement_billy",
+                        index))%>% 
+  mutate(index = ifelse(str_detect(index, "s_norm_conj_suzy|b_norm_conj_suzy"),
+                        "conjunctive_agreement_suzy",
+                        index))%>%
+  mutate(index = ifelse(str_detect(index, "s_norm_conjunctive|b_norm_conjunctive"),
+                        "conjunctive",
+                        index))%>%
+  mutate(index = ifelse(str_detect(index, "s_norm_conj_exp|b_norm_conj_exp"),
+                        "conjunctive_selection",
+                        index))%>%
+  mutate(index = ifelse(str_detect(index, "s_norm_disj_billy|b_norm_disj_billy"),
+                        "disjunctive_agreement_billy",
+                        index))%>% 
+  mutate(index = ifelse(str_detect(index, "s_norm_disj_suzy|b_norm_disj_suzy"),
+                        "disjunctive_agreement_suzy",
+                        index))%>%
+  mutate(index = ifelse(str_detect(index, "s_norm_disjunctive|b_norm_disjunctive"),
+                        "disjunctive",
+                        index))%>%
+  mutate(index = ifelse(str_detect(index, "s_norm_disj_exp|b_norm_disj_exp"),
+                        "disjunctive_selection",
+                        index))%>%
+  mutate(value = as.numeric(value),
+         value = ifelse(test = (norm_condition == "2" & str_detect(index, "agreement")),
+                        yes = 100 - value,
+                        no = value),
+         value = ifelse((norm_condition == "2" & str_detect(index, "selection")),
+                        3 - value,
+                        value))%>% 
+  pivot_wider(names_from = index,
+              values_from = value) %>% 
+  mutate(conjunctive_selection = factor(conjunctive_selection,
+                            levels = 1:2,
+                            labels = c("abnormal", "normal"))) %>%
+  mutate(disjunctive_selection = factor(disjunctive_selection,
+                            levels = 1:2,
+                            labels = c("abnormal", "normal")))%>%
+  mutate(judgment = ifelse(structure =="ConjLeft",
+                           100 - judgment,
+                           judgment)) %>% 
+  rename(conjunctive_agent_abnormal = conjunctive_agreement_billy,
+        conjunctive_agent_normal = conjunctive_agreement_suzy,
+        disjunctive_agent_abnormal = disjunctive_agreement_billy,
+        disjunctive_agent_normal = disjunctive_agreement_suzy) %>% 
+  arrange(participant) %>%
+  # define exclusion criteria
+  mutate(exclude = ifelse(
+    test = (conjunctive_agent_abnormal < conjunctive_agent_normal) &
+         (disjunctive_agent_abnormal < disjunctive_agent_normal) &
+         (conjunctive < 50) &
+         (disjunctive > 50),
+    yes = 0,
+    no = 1))
+
+# COMBINE DATA 
+df.structure = df.stat_abnormal_judgments %>% 
+  mutate(explanation = "abnormal") %>% 
+  bind_rows(df.stat_normal_judgments %>% 
+              mutate(explanation = "normal")) %>% 
+  rename(conjunctive_abnormal = conjunctive_ball_abnormal,
+         conjunctive_normal = conjunctive_ball_normal,
+         disjunctive_abnormal = disjunctive_ball_abnormal,
+         disjunctive_normal = disjunctive_ball_normal) %>% 
+  mutate(norm = "statistical") %>% 
+  bind_rows(df.pres_abnormal_judgments %>% 
+              mutate(explanation = "abnormal") %>% 
+              bind_rows(df.pres_normal_judgments %>% 
+                          mutate(explanation = "normal")) %>% 
+              rename(conjunctive_abnormal = conjunctive_agent_abnormal,
+                     conjunctive_normal = conjunctive_agent_normal,
+                     disjunctive_abnormal = disjunctive_agent_abnormal,
+                     disjunctive_normal = disjunctive_agent_normal) %>% 
+              mutate(norm = "prescriptive")) %>% 
+  filter(exclude == 0) %>% # filter based on exclusion criteria
+  select(-c(norm_condition, structure)) %>% 
+  rename(conjunctive_cause = conjunctive, 
+         disjunctive_cause = disjunctive) %>% 
+  mutate(participant = 1:n()) %>% 
+  pivot_longer(names_to = c("structure", "index"),
+               names_sep = "_",
+               cols = c(contains("disjunctive"), contains("conjunctive")),
+               values_ptypes = list(value = "as.character")) %>% 
+  pivot_wider(names_from = index,
+              values_from = value) %>% 
+  mutate_at(vars(cause, abnormal, normal), ~ as.numeric(.))
+```
+
+## Demographics
+
+```{r}
+df.structure.demo = df.stat_abnormal_data %>% 
+  select(feedback,
+         age_1_text,
+         gender,
+         race_1_text,
+         ethnicity) %>% 
+  mutate(norm = "statistical",
+         normality = "abnormal",
+         participant = 1:n()) %>% 
+  left_join(df.stat_abnormal_judgments %>% 
+              select(participant, exclude),
+            by = "participant") %>% 
+  bind_rows(df.stat_normal_data %>% 
+              select(feedback,
+                     age_1_text,
+                     gender,
+                     race_1_text,
+                     ethnicity) %>% 
+              mutate(norm = "statistical",
+                     normality = "normal",
+                     participant = 1:n()) %>% 
+              left_join(df.stat_normal_judgments %>% 
+                          select(participant, exclude),
+                        by = "participant")) %>% 
+  bind_rows(df.pres_abnormal_data %>% 
+              select(feedback,
+                     age_1_text,
+                     gender,
+                     race_1_text,
+                     ethnicity) %>% 
+              mutate(norm = "prescriptive",
+                     normality = "abnormal",
+                     participant = 1:n()) %>% 
+              left_join(df.pres_abnormal_judgments %>% 
+                          select(participant, exclude),
+                        by = "participant")) %>% 
+  bind_rows(df.pres_normal_data %>% 
+              select(feedback,
+                     age_1_text,
+                     gender,
+                     race_1_text,
+                     ethnicity) %>% 
+              mutate(norm = "prescriptive",
+                     normality = "normal",
+                     participant = 1:n()) %>% 
+              left_join(df.pres_normal_judgments %>% 
+                          select(participant, exclude),
+                        by = "participant")) %>% 
+  mutate(age = as.numeric(age_1_text),
+         age = ifelse(age > 1000, 2019 - age, age),
+         gender = ifelse(gender == 1, "Female", gender),
+         gender = ifelse(gender == 2, "Male", gender),
+         gender = ifelse(gender == 3, "Non-binary", gender),
+         gender = ifelse(gender == 4, "Prefer not to say.", gender))
+
+df.structure.demo %>% 
+  summarize(n_excluded = sum(exclude == 1))
+
+df.structure.demo %>% 
+  filter(exclude == 0) %>%
+  count(norm, normality)
+
+df.structure.demo %>% 
+  # filter(exclude == 0) %>% 
+  summarize(n_total = n(),
+            n_female = sum(gender == "Female"),
+            n_male = sum(gender == "Male"),
+            n_not_say = sum(gender == "Prefer not to say."),
+            n_non_binary = sum(gender == "Non-binary"),
+            mean_age = mean(age, na.rm = T),
+            sd_age = sd(age, na.rm = T)) %>% 
+  mutate_at(vars(contains("age")), round)
+
+# remove unnecessary variables
+rm(list = ls()[!ls() %in% c("df.normality",
+                            "df.normality.demo",
+                            "df.structure",
+                            "df.structure.demo",
+                            "regression_table",
+                            "print_table")])
+```
+
+## Plots 
+
+### Causal selections
+
+```{r fig.height=6, fig.width=8}
+set.seed(1)
+df.plot = df.structure %>% 
+  mutate(selection = ifelse(selection == "abnormal", 1, 0),
+         norm = factor(norm,
+                            levels = c("statistical", "prescriptive"),
+                            labels = c("statistical\nnorm", "prescriptive\nnorm")))
+  
+df.text = df.plot %>% 
+  distinct(participant, norm) %>% 
+  count(norm) %>% 
+  mutate(label = str_c("N = ", n),
+         selection = 1.05,
+         structure = NA)
+
+df.line = df.plot %>% 
+  group_by(norm, structure) %>% 
+  summarize(selection = mean(selection)) %>% 
+  ungroup() %>% 
+  mutate(x = c(0.75, 1.25, 1.75, 2.25))
+
+p = ggplot(data = df.plot,
+       mapping = aes(x = norm, 
+                     y = selection,
+                     group = structure,
+                     fill = structure)) +
+  geom_hline(yintercept = 0.5, 
+             linetype = 2) + 
+  stat_summary(fun.data = "mean_cl_boot",
+               geom = "pointrange",
+               position = position_dodge(width = 0.5),
+               size = 1.5,
+               shape = 21,
+               alpha = 0) +
+  geom_point(aes(color = condition), position = position_dodge(width = 0.5), 
+             alpha = 0, show.legend = FALSE) + 
+  annotate(x = c(0.52, 0.52),
+           y = c(0, 1),
+           geom = "text",
+           label = c("normal\ncause", "abnormal\ncause"),
+           hjust = c(0, 1),
+           angle = 90,
+           size = 7) +
+  geom_text(data = df.text,
+            mapping = aes(label = label),
+            position = position_dodge(width = 0.5),
+            size = 6) +
+  labs(x = "type of norm",
+       y = "% abnormal cause selections") +
+  scale_fill_brewer(palette = "Set1") +
+  scale_y_continuous(breaks = seq(0, 1, 0.25),
+                     labels = seq(0, 1, 0.25),
+                     limits = c(0, 1.05)) +
+  theme(text = element_text(size = 24),
+        legend.position = "bottom",
+        axis.title.x = element_blank())
+
+# hack to link the dodged points:
+# https://stackoverflow.com/questions/51737201/how-to-draw-line-between-dodged-geometry-in-ggplot
+
+p + geom_line(data = layer_data(p, 2L),
+              mapping = aes(x = x,
+                            y = y,
+                            group = rep(1:2, 2),
+                            fill = NA),
+              size = 1,
+              linetype = 1) + 
+  stat_summary(fun.data = "mean_cl_boot",
+               geom = "pointrange",
+               position = position_dodge(width = 0.5),
+               size = 1.5,
+               shape = 21)
+
+ggsave("../../figures/plots/structure_selections.pdf",
+       width = 8,
+       height = 6)
+```
+
+### Main judgment data 
+
+```{r fig.height=6, fig.width=8}
+set.seed(1)
+
+df.plot = df.structure %>% 
+  select(participant, norm, explanation, judgment) %>% 
+                               distinct() %>% 
+  mutate(norm = factor(norm,
+                       levels = c("statistical", "prescriptive"),
+                       labels = c("statistical\nnorm", "prescriptive\nnorm")),
+         judgment = judgment - 50)
+
+df.text = df.plot %>% 
+  count(explanation, norm) %>% 
+  mutate(label = str_c("N = ", n),
+         judgment = 55)
+
+ggplot(data = df.plot,
+       mapping = aes(x = norm, 
+                     y = judgment,
+                     group = explanation,
+                     fill = explanation)) +
+  geom_hline(yintercept = 0, 
+             linetype = 2) + 
+  geom_point(mapping = aes(color = explanation), 
+             alpha = 0.2,
+             size = 2,
+             position = position_jitterdodge(jitter.width = 0.1,
+                                             dodge.width = 0.5),
+             show.legend = F) + 
+  stat_summary(fun.data = "mean_cl_boot",
+               geom = "pointrange",
+               position = position_dodge(width = 0.5),
+               size = 1.5,
+               shape = 21) + 
+  annotate(x = c(0.5, 0.5),
+           y = c(-50, 50),
+           geom = "text",
+           label = c("preference for\ndisjunctive structure", "preference for\nconjunctive structure"),
+           hjust = c(0, 1),
+           angle = 90,
+           size = 5) + 
+  geom_text(data = df.text,
+            mapping = aes(label = label),
+            position = position_dodge(width = 0.5),
+            size = 5) + 
+  labs(x = "type of norm",
+       y = "structure inference") + 
+  scale_fill_brewer(palette = "Set1") +
+  scale_color_brewer(palette = "Set1") +
+  scale_y_continuous(breaks = seq(-50, 50, 25),
+                     labels = seq(-50, 50, 25),
+                     limits = c(-50, 55)) + 
+  theme(text = element_text(size = 24),
+        legend.position = "bottom",
+        axis.title.x = element_blank())
+
+ggsave("../../figures/plots/structure_judgments.pdf",
+       width = 8,
+       height = 6)
+```
+
+### Individual differences 
+
+```{r fig.height=6, fig.width=8}
+set.seed(1)
+
+df.plot = df.structure %>% 
+  select(participant, explanation, judgment, norm, structure, selection) %>% 
+  pivot_wider(names_from = "structure",
+              values_from = "selection") %>%
+  mutate(disjunctive = str_c("D: ", disjunctive),
+         conjunctive = str_c("C: ", conjunctive)) %>% 
+  unite("selection", c(disjunctive, conjunctive), sep = "&", remove = F) %>% 
+  mutate(judgment = judgment - 50,
+         selection = str_replace(selection, "&", "\n"))
+
+df.text = df.plot %>% 
+  count(selection) %>% 
+  mutate(judgment = 55,
+         label = str_c("n = ", n),
+         explanation = NA)
+
+  ggplot(data = df.plot,
+         mapping = aes(x = selection, 
+                     y = judgment,
+                     group = explanation,
+                     fill = explanation)) +
+  geom_hline(yintercept = 0, 
+             linetype = 2) + 
+  geom_point(mapping = aes(color = explanation),
+    alpha = 0.2,
+             size = 2,
+             position = position_jitterdodge(jitter.width = 0.1,
+                                             dodge.width = 0.5),
+             show.legend = F) + 
+  stat_summary(fun.data = "mean_cl_boot",
+               geom = "pointrange",
+               position = position_dodge(width = 0.5),
+               size = 1.5,
+               shape = 21) + 
+  annotate(x = c(0.55, 0.55),
+           y = c(-50, 50),
+           geom = "text",
+           label = c("preference for\ndisjunctive structure", "preference for\nconjunctive structure"),
+           hjust = c(0, 1),
+           angle = 90,
+           size = 5) + 
+  geom_text(data = df.text,
+            mapping = aes(label = label),
+            position = position_dodge(width = 0.5),
+            size = 5) +
+  labs(x = "type of norm",
+       y = "structure inference") + 
+  scale_fill_brewer(palette = "Set1") +
+  scale_color_brewer(palette = "Set1") +
+  scale_y_continuous(breaks = seq(-50, 50, 25),
+                     labels = seq(-50, 50, 25),
+                     limits = c(-50, 55)) + 
+  theme(text = element_text(size = 24),
+        legend.position = "bottom",
+        axis.title.x = element_blank())
+
+ggsave("../../figures/plots/structure_judgments_based_on_selections.pdf",
+       width = 8,
+       height = 6)
+```
+
+## Stats 
+
+### Bayesian regression on selections
+
+```{r}
+fit_structure_selection = brm(formula = selection ~ 1 + structure * norm + (1 | participant),
+                              family = "bernoulli",
+                              data = df.structure %>% 
+                                mutate(selection = ifelse(selection == "normal", 0, 1)),
+                              seed = 1,
+                              cores = 2,
+                              file = "cache/fit_structure_selection")
+fit_structure_selection
+```
+
+### Bayesian regression on judgment data
+
+```{r}
+fit_structure_judgment = brm(formula = judgment ~ explanation * norm,
+                             data = df.structure %>% 
+                               select(participant, norm, explanation, judgment) %>% 
+                               distinct(),
+                             seed = 1,
+                             cores = 2,
+                             file = "cache/fit_structure_judgment")
+fit_structure_judgment
+```
+
+## Tables
+
+### Causal selections 
+
+```{r}
+regression_table(fit_structure_selection) %>% 
+  print_table()
+```
+
+### Structure judgments 
+
+```{r}
+regression_table(fit_structure_judgment) %>% 
+  print_table()
+```
+
+### Selection patterns
+
+```{r}
+df.structure %>% 
+  select(participant, judgment, norm, structure, selection) %>% 
+  pivot_wider(names_from = "structure",
+              values_from = "selection") %>% 
+  count(disjunctive, conjunctive) %>% 
+  print_table()
+```
+
+### Difference scores in structure inference based on causal selections 
+
+```{r}
+df.structure %>% 
+  select(participant, explanation, judgment, norm, structure, selection) %>% 
+  pivot_wider(names_from = "structure",
+              values_from = "selection") %>%
+  mutate(disjunctive = str_c("D: ", disjunctive),
+         conjunctive = str_c("C: ", conjunctive)) %>% 
+  unite("selection", c(disjunctive, conjunctive), sep = " & ", remove = F) %>% 
+  group_by(explanation, selection) %>% 
+  summarize(judgment = mean(judgment),
+            n = n()) %>% 
+  pivot_wider(names_from = explanation,
+              values_from = c(judgment, n)) %>% 
+  ungroup() %>% 
+  mutate(difference = judgment_abnormal - judgment_normal,
+         n = n_abnormal + n_normal) %>% 
+  select(-c(n_abnormal, n_normal)) %>% 
+  mutate_if(is.numeric, ~ round(., 2))
+```
+
+# Comparisons 
+
+```{r}
+# experiment 1: percentage of choosing the abnormal cause as a function of causal structure
+df.normality %>% 
+  group_by(structure) %>% 
+  summarize(percentage = sum(selection == "abnormal")/n()) %>% 
+  mutate_if(is.numeric, ~ round(., 2) * 100)
+
+# experiment 1: normality inference as a function of causal structure 
+df.normality %>% 
+  group_by(structure) %>% 
+  summarize(judgment_mean = mean(judgment),
+            judgment_sd = sd(judgment)) %>% 
+  mutate_if(is.numeric, ~ round(., 2))
+
+# experiment 2: percentage of choosing the abnormal cause as a function of causal structure
+df.structure %>% 
+  group_by(structure) %>% 
+  summarize(percentage = sum(selection == "abnormal")/n()) %>% 
+  mutate_if(is.numeric, ~ round(., 2) * 100)
+
+# experiment 2: structure inference as a function of normality
+df.structure %>% 
+  group_by(explanation) %>% 
+  summarize(judgment_mean = mean(judgment),
+            judgment_sd = sd(judgment)) %>% 
+  mutate_if(is.numeric, ~ round(., 2))
+```

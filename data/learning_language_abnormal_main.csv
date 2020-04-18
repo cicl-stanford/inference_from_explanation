@@ -1,0 +1,198 @@
+StartDate,EndDate,Status,IPAddress,Progress,Duration (in seconds),Finished,RecordedDate,ResponseId,RecipientLastName,RecipientFirstName,RecipientEmail,ExternalReference,LocationLatitude,LocationLongitude,DistributionChannel,UserLanguage,Q39,Q40,Q41,Q42,Q43,DT1_1,DT1_2,DT1_3,DT1_4,DT1_5,DB1_1,DB1_2,DB1_3,DB1_4,DB1_5,Conj_A_DB_1,Conj_B_DB_1,Conj_DB_1,Exp_Conj_DB,Disj_A_DB_1,Disj_B_DB_1,Disj_DB_1,Exp_Disj_DB,Abnormal_B_Conj_Left_1,Abnormal_B_Con_Right_1,Conj_A_DT_1,Conj_B_DT_1,Conj_DT_1,Exp_Conj_DT,Disj_A_DT_1,Disj_B_DT_1,Disj_DT_1,Exp_Disj_DT,Abnormal_A_Conj_Left_1,Abnormal_B_Con_Righ_1,DB2_1,DB2_2,DB2_3,DB2_4,DB2_5,DT2_1,DT2_2,DT2_3,DT2_4,DT2_5,Feedback,Age,Age_1_TEXT,Gender,Race,Race_1_TEXT,Ethnicity,Condition,Structure
+Start Date,End Date,Response Type,IP Address,Progress,Duration (in seconds),Finished,Recorded Date,Response ID,Recipient Last Name,Recipient First Name,Recipient Email,External Data Reference,Location Latitude,Location Longitude,Distribution Channel,User Language,"Are you a bot?
+
+ 
+
+Liam says to Emma: ""It's a beautiful day, isn't it?""
+ 
+
+Who is Liam talking to? (case sensitive)","Are you a bot?
+
+ 
+
+Mia says to Benjamin: ""It's a beautiful day, isn't it?""
+ 
+
+Who is Mia talking to? (case sensitive)","Are you a bot?
+
+ 
+
+William says to Ava: ""It's a beautiful day, isn't it?""
+ 
+
+Who is William talking to? (case sensitive)","Are you a bot?
+
+ 
+
+Amelia says to Noah: ""It's a beautiful day, isn't it?""
+ 
+
+Who is Amelia talking to? (case sensitive)","Are you a bot?
+
+ 
+
+Evelyn says to James: ""It's a beautiful day, isn't it?""
+ 
+
+Who is Evelyn talking to? (case sensitive)","Please answer the following questions:
+
+ 
+
+ 
+
+                         
+
+In this set up, if both balls go through the motion block and hit ball E, ball E will go through the gate.","In this set up, if both balls go through the motion block and hit ball E, ball E will go through the gate.","If only one of the balls goes through the motion block and hits ball E, ball E will go through the g","In this set up, if only one of the balls goes through the motion block and hits ball E, ball E will go through the gate.",Which motion block is more likely to block a ball?,"Please answer the following questions:
+
+ 
+
+ 
+
+                         
+
+In this setup, if both balls go through the motion block and hit ball E, ball E will go through the gate.","In this setup, if both balls go through the motion block and hit ball E, ball E will go through the gate.","If only one of the balls goes through the motion block and hits ball E, ball E will go through the g","In this setup, if only one of the balls goes through the motion block and hits ball E, ball E will go through the gate.",Which motion block is more likely to block a ball?,"How much do you agree with the following statements?
+
+ 
+
+ ""Ball A will hit Ball E"".","""Ball B will hit Ball E"".","""If only one of the two balls goes through the block and hits Ball E then Ball E will go through the gate.""",Which of the following statements better describes what has happened in this situation?,"How much do you agree with the following statements?
+
+ 
+
+ ""Ball A will hit Ball E"".","""Ball B will hit Ball E"".","""If only one of the two balls goes through the block and hits Ball E then Ball E will go through the gate.""",Which of the following statements better describes what has happened in this situation?,"Given Ben's decision, which of these two scenes did he see?","Given Ben's decision, which of these two scenes did he see?","How much do you agree with the following statements?
+
+
+
+ ""Ball A will hit Ball E"".","""Ball B will hit Ball E"".","""If only one of the two balls goes through the block and hits Ball E then Ball E will go through the gate.""",Which of the following statements better describes what has happened in this situation?,"How much do you agree with the following statements?
+
+
+
+ ""Ball A will hit Ball E"".","""Ball B will hit Ball E"".","""If only one of the two balls goes through the block and hits Ball E then Ball E will go through the gate.""",Which of the following statements better describes what has happened in this situation?,"Given Ben's decision, which of these two scenes did he see?","Given Ben's decision, which of these two scenes did he see?","Please answer the following questions:
+
+ 
+
+
+
+
+                         
+
+In this set up, if both balls go through the motion block and hit ball E, ball E will go through the gate.","In this set up, if both balls go through the motion block and hit ball E, ball E will go through the gate.","If only one of the balls goes through the motion block and hits ball E, ball E will go through the g","In this set up, if only one of the balls goes through the motion block and hits ball E, ball E will go through the gate.",Which motion block is more likely to block a ball?,"Please answer the following questions:
+
+ 
+
+ 
+
+                         
+
+In this set up, if both balls go through the motion block and hit ball E, ball E will go through the gate.","In this set up, if both balls go through the motion block and hit ball E, ball E will go through the gate.","If only one of the balls goes through the motion block and hits ball E, ball E will go through the g","In this set up, if only one of the balls goes through the motion block and hits ball E, ball E will go through the gate.",Which motion block is more likely to block a ball?,"Thank you for answering these questions. 
+
+ 
+
+What factors influenced your decision about which of the two scenes was more likely? Do you have any other comments about the experiment?","Please provide the following demographic information to complete the study. 
+ 
+
+1. My age is: - Selected Choice","Please provide the following demographic information to complete the study. 
+ 
+
+1. My age is: - My age in years is - Text",2. Gender,3. Race - Selected Choice,3. Race - I am - Text,Ethnicity,Condition,Structure
+"{""ImportId"":""startDate"",""timeZone"":""Europe/London""}","{""ImportId"":""endDate"",""timeZone"":""Europe/London""}","{""ImportId"":""status""}","{""ImportId"":""ipAddress""}","{""ImportId"":""progress""}","{""ImportId"":""duration""}","{""ImportId"":""finished""}","{""ImportId"":""recordedDate"",""timeZone"":""Europe/London""}","{""ImportId"":""_recordId""}","{""ImportId"":""recipientLastName""}","{""ImportId"":""recipientFirstName""}","{""ImportId"":""recipientEmail""}","{""ImportId"":""externalDataReference""}","{""ImportId"":""locationLatitude""}","{""ImportId"":""locationLongitude""}","{""ImportId"":""distributionChannel""}","{""ImportId"":""userLanguage""}","{""ImportId"":""QID59_TEXT""}","{""ImportId"":""QID60_TEXT""}","{""ImportId"":""QID61_TEXT""}","{""ImportId"":""QID62_TEXT""}","{""ImportId"":""QID63_TEXT""}","{""ImportId"":""QID188""}","{""ImportId"":""QID189""}","{""ImportId"":""QID190""}","{""ImportId"":""QID191""}","{""ImportId"":""QID192""}","{""ImportId"":""QID126""}","{""ImportId"":""QID127""}","{""ImportId"":""QID128""}","{""ImportId"":""QID129""}","{""ImportId"":""QID130""}","{""ImportId"":""QID139_1""}","{""ImportId"":""QID140_1""}","{""ImportId"":""QID141_1""}","{""ImportId"":""QID143""}","{""ImportId"":""QID104_1""}","{""ImportId"":""QID110_1""}","{""ImportId"":""QID106_1""}","{""ImportId"":""QID31""}","{""ImportId"":""QID56_1""}","{""ImportId"":""QID58_1""}","{""ImportId"":""QID173_1""}","{""ImportId"":""QID174_1""}","{""ImportId"":""QID175_1""}","{""ImportId"":""QID177""}","{""ImportId"":""QID179_1""}","{""ImportId"":""QID180_1""}","{""ImportId"":""QID181_1""}","{""ImportId"":""QID183""}","{""ImportId"":""QID185_1""}","{""ImportId"":""QID187_1""}","{""ImportId"":""QID132""}","{""ImportId"":""QID133""}","{""ImportId"":""QID134""}","{""ImportId"":""QID135""}","{""ImportId"":""QID136""}","{""ImportId"":""QID193""}","{""ImportId"":""QID194""}","{""ImportId"":""QID195""}","{""ImportId"":""QID196""}","{""ImportId"":""QID197""}","{""ImportId"":""QID39_TEXT""}","{""ImportId"":""QID41""}","{""ImportId"":""QID41_1_TEXT""}","{""ImportId"":""QID42""}","{""ImportId"":""QID43""}","{""ImportId"":""QID43_1_TEXT""}","{""ImportId"":""QID44""}","{""ImportId"":""Condition""}","{""ImportId"":""Structure""}"
+2019-05-28 22:57:10,2019-05-28 23:02:59,0,99.68.56.159,100,349,1,2019-05-28 23:03:00,R_1jAOjEay9HkKSSe,,,,,37.822296142578125,-83.78530120849609375,anonymous,EN,,Benjamin,,,,2,2,2,2,1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,1,2,1,2,2,,,,,,,,DT,Conj_Right
+2019-05-28 22:57:00,2019-05-28 23:03:30,0,162.198.201.8,100,389,1,2019-05-28 23:03:30,R_W6yKIqbmgtz7MKB,,,,,35.9152984619140625,-79.03859710693359375,anonymous,EN,,,,,James,1,2,1,2,2,,,,,,,,,,,,,,,,12,63,2,2,66,70,84,1,,89,,,,,,1,1,1,2,2,"I think if one mentions Ball E, the bottom one, then one is thinking that it was scenario B where both had to go through.  Because A is probably the more expected ball at any time.",1,43,2,1,white,2,DT,Conj_Right
+2019-05-28 22:56:58,2019-05-28 23:07:37,0,208.89.33.105,100,638,1,2019-05-28 23:07:37,R_9MEcdtkh05Scrp7,,,,,40.432403564453125,-79.9246978759765625,anonymous,EN,,,,,James,,,,,,1,1,1,2,2,74,29,34,2,79,18,94,2,73,,,,,,,,,,,,,,,,,,,,,,It was based on the red blocks which made the one more culpable that went through the dark one.,1,21,2,1,white,2,DB,Conj_Left
+2019-05-28 23:04:42,2019-05-28 23:10:02,0,99.75.53.174,100,320,1,2019-05-28 23:10:03,R_Rn0ZeeL7rNsl7W1,,,,,41.9777984619140625,-88.2017974853515625,anonymous,EN,,,,,James,,,,,,1,1,2,2,2,76,77,0,2,92,92,100,2,0,,,,,,,,,,,,1,1,1,2,2,,,,,,Ball B was necessary for E to make it through the gate in the left scene.,1,25,2,1,Indian,2,DB,Conj_Left
+2019-05-28 23:02:00,2019-05-28 23:20:14,0,173.225.145.74,100,1093,1,2019-05-28 23:20:14,R_2cd9NN9uo17viu8,,,,,45.7364044189453125,-94.165802001953125,anonymous,EN,,,,Noah,,,,,,,1,1,1,2,2,80,20,8,1,82,20,100,1,,100,,,,,,,,,,,,,,,,,,,,,Since ball A would go through the block the easiest I felt it had more influence although both were needed in some cases to hit the ball at the same time. So it was sort of a toss up which ball was most needed. Otherwise it was basic geometry and pool table instinct whether ball E would go through the hole in certain situations.,1,62,2,1,White,2,DB,Conj_Right
+2019-05-28 23:12:34,2019-05-28 23:20:20,0,24.163.13.47,100,465,1,2019-05-28 23:20:20,R_3qPVC9hYElEEldS,,,,,36.0341033935546875,-80.39620208740234375,anonymous,EN,,Benjamin,,,,,,,,,1,2,1,2,2,77,27,56,2,93,16,100,2,,96,,,,,,,,,,,1,1,1,2,2,,,,,,That Ball B did hit the target ball,1,32,1,1,Caucasian,2,DB,Conj_Right
+2019-05-28 23:18:16,2019-05-28 23:22:51,0,99.100.238.66,100,275,1,2019-05-28 23:22:52,R_2tyRcPX3ETL8hrF,,,,,42.612396240234375,-83.0345001220703125,anonymous,EN,Emma,,,,,2,2,1,2,1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,1,1,2,2,2,,,,,,,,DT,Conj_Left
+2019-05-28 23:20:01,2019-05-28 23:31:54,0,68.100.174.128,100,712,1,2019-05-28 23:31:54,R_wRdKFazL3uk86w9,,,,,38.7769927978515625,-77.1894989013671875,anonymous,EN,,,,Noah,,,,,,,1,1,1,2,2,100,0,0,2,100,49,100,2,,100,,,,,,,,,,,,,,,,,,,,,"The farther the ball is away from the goal, the more both balls will be required.",1,24,2,1,White,2,DB,Conj_Right
+2019-05-28 23:29:58,2019-05-28 23:36:29,0,108.66.4.224,100,390,1,2019-05-28 23:36:29,R_2dWpMDsq21YsNM6,,,,,37.250701904296875,-121.83599853515625,anonymous,EN,,,,,James,,,,,,1,1,1,2,2,83,17,0,2,83,10,100,1,18,,,,,,,,,,,,,,,,,,,,,,"Ball A has a pretty good chance of going through, so the action really hinges on Ball B, I think.",1,28,1,1,White,2,DB,Conj_Left
+2019-05-28 23:31:41,2019-05-28 23:38:21,0,73.55.204.192,100,399,1,2019-05-28 23:38:22,R_2a9u4Gpf5utZyQe,,,,,29.7971954345703125,-95.32879638671875,anonymous,EN,,,,Noah,,1,1,1,2,2,,,,,,,,,,,,,,,,21,73,0,1,0,30,100,2,2,,,,,,,,,,,,I just picked one of the two balls. No other comments.,1,34,2,1,Black,2,DT,Conj_Left
+2019-05-28 23:35:37,2019-05-28 23:41:00,0,98.215.93.19,100,323,1,2019-05-28 23:41:01,R_ROj8KREBBXiYxtT,,,,,40.46929931640625,-88.9423980712890625,anonymous,EN,,,,Noah,,,,,,,1,1,1,2,2,85,22,0,2,81,22,100,1,20,,,,,,,,,,,,,,,,,,,,,,"The requirement for the ball to go through the hole was more dependent on ball B if ball E was closer to the blocks. Therefore, if someone attributes the success to ball B, then it was probably that scenario.",1,30,2,1,White,2,DB,Conj_Left
+2019-05-28 23:39:37,2019-05-28 23:42:20,0,171.61.251.82,100,163,1,2019-05-28 23:42:21,R_1Q0dBbHFQt3TnC4,,,,,13.0843048095703125,80.280487060546875,anonymous,EN,,Benjamin,,,,1,1,2,1,1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,1,2,1,2,1,,,,,,,,DT,Conj_Right
+2019-05-28 23:43:05,2019-05-28 23:43:53,0,171.61.251.82,100,47,1,2019-05-28 23:43:54,R_1dm2WwjLlbQA4w8,,,,,13.0843048095703125,80.280487060546875,anonymous,EN,,,,Noah,,,,,,,1,2,1,2,1,,,,,,,,,,,,,,,,,,,,,2,1,2,1,2,,,,,,,,,,,,,DB,Conj_Left
+2019-05-29 00:01:47,2019-05-29 00:03:44,0,122.164.41.19,100,116,1,2019-05-29 00:03:44,R_rl7mn0AP910c78l,,,,,13.0843048095703125,80.280487060546875,anonymous,EN,Emma,,,,,1,1,1,1,2,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,2,1,2,1,2,,,,,,,,DT,Conj_Left
+2019-05-28 23:57:55,2019-05-29 00:04:33,0,184.59.231.92,100,397,1,2019-05-29 00:04:33,R_2cnJfLRbhgSQf73,,,,,44.2682037353515625,-88.4264984130859375,anonymous,EN,,,,Noah,,,,,,,1,1,1,2,2,88,17,0,1,88,23,100,1,0,,,,,,,,,,,,,,,,,,,,,,"B was needed for it to go through, in the other just A is enough",1,27,2,1,White,2,DB,Conj_Left
+2019-05-29 00:10:14,2019-05-29 00:10:53,0,122.164.41.19,100,39,1,2019-05-29 00:10:54,R_3gXhWgywC8jU1ZO,,,,,13.0843048095703125,80.280487060546875,anonymous,EN,,"""It's a beautiful day, isn't it?""",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+2019-05-29 00:08:54,2019-05-29 00:11:50,0,122.174.96.126,100,176,1,2019-05-29 00:11:51,R_XTaVABXZZU7ZfEJ,,,,,13.0843048095703125,80.280487060546875,anonymous,EN,Emma,,,,,1,1,1,1,2,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,1,1,1,1,1,,,,,,,,DT,Conj_Right
+2019-05-29 00:10:59,2019-05-29 00:12:13,0,122.164.41.19,100,73,1,2019-05-29 00:12:14,R_1MPXJkibitPUmTE,,,,,13.0843048095703125,80.280487060546875,anonymous,EN,,,,," beautiful day",,,,,,2,1,1,1,2,,,,,,,,,,,,,,,,,,,,,1,1,1,1,1,,,,,,,,,,,,,DB,Conj_Left
+2019-05-29 00:05:33,2019-05-29 00:18:58,0,76.105.14.4,100,805,1,2019-05-29 00:18:59,R_3NycTntFGfuYDk6,,,,,38.6840972900390625,-121.067596435546875,anonymous,EN,,,,,James,1,1,1,2,2,,,,,,,,,,,,,,,,16,82,0,1,18,82,100,2,,76,,,,,,,,,,,"I figured that Ben would not have fallen for the ""confirmation bias"" of Ball A having an 80% chance of being blocked.",1,54,2,1,Caucasian,2,DT,Conj_Right
+2019-05-29 00:24:36,2019-05-29 00:27:47,0,68.193.158.173,100,190,1,2019-05-29 00:27:47,R_29cODE6S1xUW4tn,,,,,40.67529296875,-74.22750091552734375,anonymous,EN,,,,,james,2,1,1,1,2,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,1,2,1,2,2,,,,,,,,DT,Conj_Right
+2019-05-29 00:27:51,2019-05-29 00:28:02,0,68.193.158.173,100,10,1,2019-05-29 00:28:03,R_czJazmQmW7k2N7r,,,,,40.67529296875,-74.22750091552734375,anonymous,EN,,,,noah,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+2019-05-29 00:11:55,2019-05-29 00:38:12,0,122.174.96.126,100,1576,1,2019-05-29 00:38:13,R_21vLdzP2LuB73U7,,,,,13.0843048095703125,80.280487060546875,anonymous,EN,,,,Noah,,1,1,1,2,2,,,,,,,,,,,,,,,,100,100,0,1,100,100,0,1,,91,,,,,,,,,,,"great time to take this,very interesting.",1,28,2,1,Asian,2,DT,Conj_Right
+2019-05-29 00:29:47,2019-05-29 00:40:58,0,75.176.83.168,100,670,1,2019-05-29 00:40:58,R_332KQXzJFHBiX8G,,,,,33.973907470703125,-81.2344970703125,anonymous,EN,,,,,James,1,1,1,2,2,,,,,,,,,,,,,,,,0,100,0,1,3,51,97,2,,96,,,,,,,,,,,"Placement of Ball E is critical in determining if Ball A or Ball B created the given scenario.
+
+Interesting study. Thank you.",1,48,2,1,White,2,DT,Conj_Right
+2019-05-29 00:42:00,2019-05-29 00:49:58,0,108.233.81.229,100,477,1,2019-05-29 00:49:58,R_2wyshlhcrU9v324,,,,,37.752593994140625,-121.7700042724609375,anonymous,EN,,,,,James,1,1,1,2,2,,,,,,,,,,,,,,,,18,68,3,1,21,74,100,1,16,,,,,,,,,,,,"I figured that Ball B would go through the block each time, so whenever Ball E got pushed through the gate, I felt like Ball A was more responsible for the event (since odds were higher that Ball A would not make it through the block), particularly when both balls were needed. I assumed Ben would also give more credit to Ball A, especially if both balls were needed to push Ball E through the gate.",1,44,1,1,Caucasian,2,DT,Conj_Left
+2019-05-29 01:01:20,2019-05-29 01:18:58,0,50.25.59.23,100,1058,1,2019-05-29 01:18:58,R_1jOrvxrKHDOhKpy,,,,,37.6902008056640625,-82.26419830322265625,anonymous,EN,,,,Noah,,,,,,,1,1,2,2,2,,,,,,,,,,,,,,,,,,,,,2,2,2,2,1,,,,,,,,,,,,,DB,Conj_Left
+2019-05-29 01:46:44,2019-05-29 01:54:23,0,108.34.21.224,100,458,1,2019-05-29 01:54:24,R_2QMQJo8iKvT27fm,,,,,42.9766998291015625,-78.7958984375,anonymous,EN,,,,Noah,,,,,,,1,1,1,2,2,50,50,0,1,49,49,100,1,50,,,,,,,,,,,,,,,,,,,,,,"Your question about ""which sentence is more likely the case"" doesn't make any sense because in the first scenario, either one or both could hit in order for E to enter the goal, in the next, both must have hit for it to enter the goal.  In the last scenario, the same thing occurs.  I don't know exactly what you're testing but I can't give correct answers to your question if there isn't an answer that fits my thougths (i.e. neither of these are correct, or both were required).",1,32,2,1,Puerto Rican,1,DB,Conj_Left
+2019-05-28 23:51:09,2019-05-29 00:02:27,0,104.139.47.242,99,677,0,2019-05-29 02:13:04,R_bEmmV4Xm1v1fsVH,,,,,,,anonymous,EN,,Benjamin,,,,,,,,,1,1,1,2,2,84,21,0,2,79,24,100,1,,100,,,,,,,,,,,,,,,,,,,,,None,1,30,2,1,Male,2,DB,Conj_Right
+2019-05-28 23:31:16,2019-05-28 23:34:22,0,108.253.190.88,72,186,0,2019-05-29 02:13:10,R_cIvLH2GiFqAsMlH,,,,,,,anonymous,EN,Emma,,,,,1,1,2,2,2,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,DT,Conj_Left
+2019-05-28 23:32:58,2019-05-28 23:37:54,0,99.100.238.66,71,295,0,2019-05-29 02:13:30,R_UDuZu59vZX5bShj,,,,,,,anonymous,EN,Emma,,,,,,,,,,1,1,2,2,2,,,,,,,,,,,,,,,,,,,,,2,2,2,2,2,,,,,,,,,,,,,DB,Conj_Right
+2019-05-28 23:58:58,2019-05-29 00:00:08,0,73.76.25.106,7,69,0,2019-05-29 02:13:32,R_2vhSgVu28r6mXI8,,,,,,,anonymous,EN,,,Ava,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,DT,Conj_Right
+2019-05-30 18:40:10,2019-05-30 18:45:02,0,104.176.6.160,100,292,1,2019-05-30 18:45:03,R_cA94aHuJdnH1se5,,,,,38.0684967041015625,-122.16139984130859375,anonymous,EN,,Benjamin,,,,1,1,1,2,2,,,,,,,,,,,,,,,,16,82,0,1,21,74,100,2,,82,,,,,,,,,,,"When the ball is moved closer so both balls are needed for E to go through the goal, then ball A has a bigger hurdle to overcome so the outcome more depends on A. ",1,32,2,1,32,2,DT,Conj_Right
+2019-05-30 18:39:04,2019-05-30 18:45:32,0,24.175.68.0,100,388,1,2019-05-30 18:45:33,R_1jqzM3sWR9EQd2b,,,,,25.9243927001953125,-97.4626007080078125,anonymous,EN,,,,Noah,,1,1,1,2,2,,,,,,,,,,,,,,,,14,87,30,2,12,86,50,2,51,,,,,,,,,,,,They were both equally likely. No other comments.,1,25,1,1,White,1,DT,Conj_Left
+2019-05-30 18:43:15,2019-05-30 18:46:22,0,98.247.72.61,100,187,1,2019-05-30 18:46:23,R_3iIFuRVbokaVFfx,,,,,47.62890625,-117.551300048828125,anonymous,EN,Emma,,,,,,,,,,2,1,2,1,2,,,,,,,,,,,,,,,,,,,,,2,2,2,2,1,,,,,,,,,,,,,DB,Conj_Left
+2019-05-30 18:43:04,2019-05-30 18:47:04,0,64.132.43.68,100,240,1,2019-05-30 18:47:05,R_1mWoMFsGUUK2Nz8,,,,,35.9698028564453125,-79.99359893798828125,anonymous,EN,,,,,James,1,1,1,2,2,,,,,,,,,,,,,,,,17,78,1,1,14,82,81,2,,85,,,,,,,,,,,,1,30,2,1,White,2,DT,Conj_Right
+2019-05-30 18:40:26,2019-05-30 18:47:18,0,73.245.243.87,100,411,1,2019-05-30 18:47:18,R_D1PgVNF8Dcf26d3,,,,,27.5885009765625,-80.392303466796875,anonymous,EN,,,,Noah,,2,1,1,2,2,,,,,,,,,,,,,,,,15,87,0,1,13,77,100,2,,50,,,,,,1,1,1,2,2,The fact that both scenes needed A to get through for E to make it.,1,35,2,1,white,2,DT,Conj_Right
+2019-05-30 18:46:19,2019-05-30 18:47:25,0,122.174.105.88,100,65,1,2019-05-30 18:47:25,R_26m56Zjhd1NhNQT,,,,,13.0843048095703125,80.280487060546875,anonymous,EN,,,,amelia is a girl talking with his noah,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+2019-05-30 18:46:25,2019-05-30 18:48:15,0,98.247.72.61,100,109,1,2019-05-30 18:48:16,R_1kMLn4IL6umQ8SQ,,,,,47.62890625,-117.551300048828125,anonymous,EN,,Benjamin,,,,1,1,1,1,2,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,1,1,2,1,2,,,,,,,,DT,Conj_Left
+2019-05-30 18:46:23,2019-05-30 18:49:16,0,122.174.105.88,100,173,1,2019-05-30 18:49:16,R_1esYdt7gjmHdOHw,,,,,13.0843048095703125,80.280487060546875,anonymous,EN,emma,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+2019-05-30 18:48:10,2019-05-30 18:49:47,0,157.50.93.5,100,97,1,2019-05-30 18:49:48,R_3kv9H3znfQ8lbCS,,,,,13.0843048095703125,80.280487060546875,anonymous,EN,,,Prince William talks about the pain of losing his mother Diana,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+2019-05-30 18:49:55,2019-05-30 18:50:18,0,157.50.93.5,100,22,1,2019-05-30 18:50:19,R_1KmfmbIL235a4Zj,,,,,13.0843048095703125,80.280487060546875,anonymous,EN,,,no,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+2019-05-30 18:49:25,2019-05-30 18:50:31,0,122.174.105.88,100,65,1,2019-05-30 18:50:32,R_1H2fGOfUvrK3aOK,,,,,13.0843048095703125,80.280487060546875,anonymous,EN,,,,computer,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+2019-05-30 18:50:43,2019-05-30 18:51:15,0,157.50.93.5,100,32,1,2019-05-30 18:51:16,R_1dHcZ2RW2MArJc5,,,,,13.0843048095703125,80.280487060546875,anonymous,EN,"William John Paul Gallagher (born 21 September 1972) is an English singer and songwriter. He rose to fame as the lead singer of the rock band Oasis, and later served as the singer of Beady Eye, before performing as a solo artist after the dissolution of both bands.[1][2] His eccentric dress sense, distinctive singing style, and abrasive attitude have been the subject of commentary in the press; he remains one of the most recognisable figures in modern British music.",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+2019-05-30 18:47:35,2019-05-30 18:52:46,0,40.130.207.175,100,310,1,2019-05-30 18:52:46,R_2V9doSEPWH1gKPu,,,,,34.9250946044921875,-80.7277984619140625,anonymous,EN,Emma,,,,,,,,,,1,1,1,2,2,91,27,0,2,86,38,100,2,,75,,,,,,,,,,,,,,,,,,,,,A lot of it had to do with Ball B as it was the one less likely to go through due to the strength of the motion block.  That was the factor I considered most strongly.  Thanks for the HIT!  I did my best and hope the data is useful!,1,44,2,1,Caucasian,2,DB,Conj_Right
+2019-05-30 18:42:07,2019-05-30 18:54:06,0,157.49.166.40,100,718,1,2019-05-30 18:54:06,R_1q9VN7Tl17c3qro,,,,,12.983306884765625,77.58331298828125,anonymous,EN,,Benjamin,,,,,,,,,1,1,1,2,2,77,51,96,1,81,50,43,1,100,,,,,,,,,,,,,,,,,,,,,,,1,1984,2,1,"South Asian ",2,DB,Conj_Left
+2019-05-30 18:44:34,2019-05-30 18:54:10,0,71.230.124.130,100,576,1,2019-05-30 18:54:11,R_2R9uxUMWmdlOIQS,,,,,39.9340057373046875,-75.160003662109375,anonymous,EN,Emma,,,,,,,,,,1,1,1,2,2,48,67,53,1,54,41,53,1,,54,,,,,,,,,,,,,,,,,,,,,No.,1,24,2,1,asian,2,DB,Conj_Right
+2019-05-30 18:54:08,2019-05-30 19:00:02,0,47.202.104.105,100,353,1,2019-05-30 19:00:02,R_USKNGOE78y0xDDr,,,,,28.3636932373046875,-82.6759033203125,anonymous,EN,,,Ava,,,,,,,,1,1,1,2,2,79,57,0,2,71,28,100,1,,89,,,,,,,,,,,,,,,,,,,,,"When ball E was further from the gate and needed both balls to hit it in order to go through, it was more reliant on the ball behind the darker blockout gate. ",1,36,1,1,white,2,DB,Conj_Right
+2019-05-30 18:54:40,2019-05-30 19:00:09,0,73.71.186.189,100,328,1,2019-05-30 19:00:09,R_1H1UiUQePiWZvL0,,,,,38.2407989501953125,-122.04199981689453125,anonymous,EN,,Benjamin,,,,,,,,,1,1,1,2,2,84,13,0,1,85,15,100,1,0,,,,,,,,,,,,,,,,,,,,,,"Nothing really, there was no discerning facts that could be used to garner where the ball was other than speculation.",1,38,2,1,White,2,DB,Conj_Left
+2019-05-30 18:59:45,2019-05-30 19:05:41,0,76.0.62.209,100,356,1,2019-05-30 19:05:41,R_1dA1LNs4bTJyq1X,,,,,38.8177947998046875,-94.04620361328125,anonymous,EN,,,,Noah,,,,,,,1,2,1,2,2,81,15,1,2,83,20,98,2,,78,,,,,,,,,,,1,1,1,2,2,,,,,,If E were closer to the gate and any contact might have sent it through then B's contact would have been less important.,1,29,2,2,,2,DB,Conj_Right
+2019-05-30 19:02:34,2019-05-30 19:08:47,0,216.106.67.3,100,372,1,2019-05-30 19:08:47,R_BM9FsAp4wWiQow1,,,,,38.93359375,-92.36299896240234375,anonymous,EN,,,,Noah,,1,1,1,2,2,,,,,,,,,,,,,,,,11,81,0,2,11,87,100,2,20,,,,,,,,,,,,"each scenario was equally likely, I aired on the side I thought it would be more likely he chose",1,33,2,1,white,2,DT,Conj_Left
+2019-05-30 19:03:15,2019-05-30 19:09:05,0,67.61.187.126,100,350,1,2019-05-30 19:09:06,R_28YWeSUT5vFasJ3,,,,,43.5518035888671875,-111.89189910888671875,anonymous,EN,,,,,James,,,,,,1,1,1,2,2,21,85,10,1,11,75,94,2,,23,,,,,,,,,,,,,,,,,,,,,"I figured that if ball B was most likely to go through then if only one ball went through it was ball B that made it go through the gate if E was closer to the gate. ",1,30,1,1,White,2,DB,Conj_Right
+2019-05-30 18:48:50,2019-05-30 19:09:48,0,96.58.200.155,100,1258,1,2019-05-30 19:09:49,R_WBEhWwnykyMkXyp,,,,,28.006805419921875,-82.555999755859375,anonymous,EN,,,,,James,2,1,2,1,1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,1,2,2,1,1,,,,,,,,DT,Conj_Left
+2019-05-30 18:44:37,2019-05-30 19:13:31,0,184.1.98.115,100,1734,1,2019-05-30 19:13:32,R_z0QHpEUIQfcTM65,,,,,41.5570068359375,-85.31500244140625,anonymous,EN,,Benjamin,,,,1,1,2,2,2,,,,,,,,,,,,,,,,15,81,0,1,84,92,99,1,,80,,,,,,1,1,1,2,2,"Ball B has less likely chance of being blocked, so Ball A had to go through in order for the second scenario to make sense.",1,50,1,1,white,2,DT,Conj_Right
+2019-05-30 18:59:47,2019-05-30 19:13:55,0,108.213.13.43,100,847,1,2019-05-30 19:13:56,R_a9pKsoliV2rLTGx,,,,,41.0731964111328125,-80.65529632568359375,anonymous,EN,,,,,James,,,,,,2,1,1,2,2,88,51,61,2,100,90,100,1,0,,,,,,,,,,,,1,1,1,2,2,,,,,,It was necessary for the second ball to go through the gate so E must have been further away. from the hole,1,41,1,1,white,2,DB,Conj_Left
+2019-05-30 19:11:57,2019-05-30 19:14:55,0,70.176.37.198,100,178,1,2019-05-30 19:14:56,R_rkIEX56O3BRav7j,,,,,33.312103271484375,-111.82129669189453125,anonymous,EN,,Benjamin,,,,1,1,1,1,2,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,1,1,2,2,2,,,,,,,,DT,Conj_Left
+2019-05-30 19:14:32,2019-05-30 19:16:59,0,129.7.0.75,100,147,1,2019-05-30 19:16:59,R_1P13VMSROt97pBJ,,,,,29.8365020751953125,-95.43630218505859375,anonymous,EN,,,,Noah,,,,,,,1,1,1,2,2,67,29,0,2,80,24,9,2,,27,,,,,,,,,,,,,,,,,,,,,Some of the factors included probability of the dark red block stopping the motion of ball B and where ball E was located.,1,19,2,1,Caucasian,2,DB,Conj_Right
+2019-05-30 18:52:59,2019-05-30 19:18:44,0,157.51.125.125,100,1544,1,2019-05-30 19:18:44,R_C2GGkxW6fmoqrCh,,,,,13.0843048095703125,80.280487060546875,anonymous,EN,,Benjamin,,,,,,,,,1,2,1,2,2,,,,,,,,,,,,,,,,,,,,,1,1,1,1,2,,,,,,,,,,,,,DB,Conj_Left
+2019-05-30 19:15:03,2019-05-30 19:20:50,0,70.176.37.198,100,347,1,2019-05-30 19:20:51,R_2WT0woWrpAV0Gqw,,,,,33.312103271484375,-111.82129669189453125,anonymous,EN,,,,Noah,,1,1,2,2,2,,,,,,,,,,,,,,,,5,68,13,2,7,82,82,1,84,,,,,,,1,1,1,2,2,"An inferred guess ",1,29,1,1,White,2,DT,Conj_Left
+2019-05-30 19:18:49,2019-05-30 19:21:40,0,157.51.125.125,100,171,1,2019-05-30 19:21:40,R_10GaJyOaLXG1DMZ,,,,,13.0843048095703125,80.280487060546875,anonymous,EN,,Benjamin,,,,,,,,,1,2,1,2,2,,,,,,,,,,,,,,,,,,,,,1,1,2,2,1,,,,,,,,,,,,,DB,Conj_Right
+2019-05-30 19:18:50,2019-05-30 19:21:49,0,157.51.172.152,100,179,1,2019-05-30 19:21:50,R_tWFPLi1NDHHDZ0l,,,,,13.0843048095703125,80.280487060546875,anonymous,EN,,,,Noah,,1,1,1,1,1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,1,2,1,2,2,,,,,,,,DT,Conj_Right
+2019-05-30 19:15:24,2019-05-30 19:22:09,0,24.202.91.37,100,404,1,2019-05-30 19:22:09,R_stzj2smn7P0OszD,,,,,45.38909912109375,-71.89859771728515625,anonymous,EN,Emma,,,,,1,1,1,2,2,,,,,,,,,,,,,,,,15,78,0,1,17,76,100,2,13,,,,,,,,,,,,"There is only 20% chance that ball A goes through the block and ball E through the gate, while there's an 80% chance for ball B, so if ball E goes through, both A and B have to pass the block, and since there a lower probability for A, it's more ""noteworthy"".",1,27,2,1,Caucasian,2,DT,Conj_Left
+2019-05-30 19:18:50,2019-05-30 19:23:43,0,157.51.172.152,100,292,1,2019-05-30 19:23:44,R_1dNsg1cm3GermO1,,,,,13.0843048095703125,80.280487060546875,anonymous,EN,,,,,James,1,2,1,2,1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,2,1,2,1,2,,,,,,,,DT,Conj_Right
+2019-05-30 19:11:55,2019-05-30 19:23:52,0,98.160.165.102,100,716,1,2019-05-30 19:23:52,R_e8NiR0xAyR4usjD,,,,,36.1219940185546875,-115.08599853515625,anonymous,EN,,Benjamin,,,,,,,,,1,1,1,2,2,91,11,0,2,95,15,100,1,78,,,,,,,,,,,,,,,,,,,,,,"According to the rules,  ball E that is closest to the gate would need to be hit by either ball A or B or both balls to go through the gate. Since Ben chose B I think it meant that the ball E was hit by 1 ball. I am somewhat confused because the choice and animation didn't match the rules.",1,32,2,1,Asian,2,DB,Conj_Left
+2019-05-30 19:22:27,2019-05-30 19:25:55,0,199.241.125.93,100,207,1,2019-05-30 19:25:56,R_Z8X7iCFzSzE4pkB,,,,,44.9752044677734375,-93.261199951171875,anonymous,EN,Emma,,,,,,,,,,1,2,1,2,2,,,,,,,,,,,,,,,,,,,,,1,1,1,1,2,,,,,,,,,,,,,DB,Conj_Right
+2019-05-30 19:23:49,2019-05-30 19:28:34,0,157.51.172.152,100,284,1,2019-05-30 19:28:35,R_1ImXRGuIYZYtWC4,,,,,13.0843048095703125,80.280487060546875,anonymous,EN,Emma,,,,,1,1,2,2,2,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,2,2,1,2,2,,,,,,,,DT,Conj_Right
+2019-05-30 19:25:06,2019-05-30 19:28:42,0,207.191.102.62,100,216,1,2019-05-30 19:28:42,R_1pzEao2glxeeHHl,,,,,30.9329986572265625,-92.954803466796875,anonymous,EN,,,,Noah,,,,,,,2,1,1,2,2,73,28,8,2,84,17,81,1,8,,,,,,,,,,,,1,1,1,2,2,,,,,,"If it was closer, Ball B was more likely the cause of E going through the gate and vice versa.",1,28,2,2,,2,DB,Conj_Left
+2019-05-30 19:23:50,2019-05-30 19:28:54,0,157.51.172.152,100,303,1,2019-05-30 19:28:54,R_1FPn2qAADboXm9s,,,,,13.0843048095703125,80.280487060546875,anonymous,EN,,,,Noha,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+2019-05-30 19:23:53,2019-05-30 19:32:01,0,157.51.172.152,100,487,1,2019-05-30 19:32:01,R_3qWMr6WbJkS9MR7,,,,,13.0843048095703125,80.280487060546875,anonymous,EN,,,,,James,,,,,,1,1,1,2,2,84,70,84,1,77,74,49,2,,87,,,,,,,,,,,,,,,,,,,,,interesting,1,1982,1,1,asian,3,DB,Conj_Right
+2019-05-30 19:21:45,2019-05-30 19:34:23,0,157.51.125.125,100,758,1,2019-05-30 19:34:24,R_1NmPc4QYXOQnRnY,,,,,13.0843048095703125,80.280487060546875,anonymous,EN,,Benjamin,,,,1,2,1,2,2,,,,,,,,,,,,,,,,44,57,40,1,72,61,44,2,,100,,,,,,1,1,1,2,2,very interesting,1,1987,2,1,asia,2,DT,Conj_Right
+2019-05-30 19:26:42,2019-05-30 19:35:38,0,69.243.81.82,100,536,1,2019-05-30 19:35:39,R_pFcmugpkxi9h79f,,,,,38.80780029296875,-77.05229949951171875,anonymous,EN,,,,Noah,,1,1,1,2,2,,,,,,,,,,,,,,,,22,81,0,1,18,81,100,2,27,,,,,,,,,,,,"In the scene where Ball E is closer to the barriers, it is more important that Ball A makes it through the barriers as compared to the scene where Ball E is close to the goal, so it is more likely that a person would consider Ball A getting through the barrier important in the first scene.",1,30,2,1,White,2,DT,Conj_Left
+2019-05-30 19:31:17,2019-05-30 19:40:54,0,49.207.186.231,100,577,1,2019-05-30 19:40:54,R_2e2uXEJhujDDO8z,,,,,13.0843048095703125,80.280487060546875,anonymous,EN,,Benjamin,,,,,,,,,1,1,1,1,2,,,,,,,,,,,,,,,,,,,,,1,1,2,2,2,,,,,,,,,,,,,DB,Conj_Left
+2019-05-30 19:40:03,2019-05-30 19:42:58,0,103.89.65.54,100,174,1,2019-05-30 19:42:59,R_1259nwBVDL4USgz,,,,,10.990997314453125,76.966705322265625,anonymous,EN,,,,,James,1,1,1,2,2,,,,,,,,,,,,,,,,66,35,68,2,75,38,69,1,77,,,,,,,,,,,,interesting,1,1982,2,1,asian,3,DT,Conj_Left
+2019-05-30 19:32:43,2019-05-30 19:43:22,0,98.144.149.220,100,639,1,2019-05-30 19:43:23,R_1KrRDCpb5Rela0G,,,,,42.7256011962890625,-87.85880279541015625,anonymous,EN,,,Ava,,,,,,,,1,1,1,2,2,98,49,1,1,100,52,100,1,,0,,,,,,,,,,,,,,,,,,,,,"I based my decision on what Ben chose. It was obvious that the ball went through the dark colored block. ",1,60,2,1,"Caucasian ",2,DB,Conj_Right
+2019-05-30 19:40:18,2019-05-30 19:45:22,0,157.51.217.107,100,304,1,2019-05-30 19:45:23,R_QnsGk5FIw7HS8O5,,,,,13.0843048095703125,80.280487060546875,anonymous,EN,,Benjamin,,,,1,1,1,2,2,,,,,,,,,,,,,,,,57,62,100,1,98,99,30,1,,100,,,,,,,,,,,very interesting,1,1982,1,1,asia,3,DT,Conj_Right
+2019-05-30 19:44:59,2019-05-30 19:48:57,0,96.73.169.161,100,238,1,2019-05-30 19:48:57,R_YQZyJSskpIcOxNf,,,,,38.7519073486328125,-76.90920257568359375,anonymous,EN,,,,,James,,,,,,1,1,1,2,2,84,39,0,2,85,31,100,1,100,,,,,,,,,,,,,,,,,,,,,,"Position of ball E is an important factor. ",1,25,2,1,Asian,2,DB,Conj_Left
+2019-05-30 19:38:30,2019-05-30 19:50:10,0,76.124.189.160,100,699,1,2019-05-30 19:50:10,R_PHtqjP8PW2zwJfr,,,,,39.91949462890625,-75.15650177001953125,anonymous,EN,,,Ava,,,,,,,,2,1,1,2,2,97,4,0,2,100,5,100,1,0,,,,,,,,,,,,1,1,1,2,2,,,,,,"It was necessary for Ball B to have passed the block in order for Ball E to exit, so both balls had to have hit in order to reach the end result. ",1,54,1,1,White,2,DB,Conj_Left
+2019-05-30 19:49:53,2019-05-30 19:54:57,0,66.215.164.125,100,304,1,2019-05-30 19:54:57,R_3im6oEFGzLGEGkI,,,,,33.9449005126953125,-117.38339996337890625,anonymous,EN,,,Ava,,,1,1,1,2,2,,,,,,,,,,,,,,,,17,92,4,1,30,91,100,1,6,,,,,,,,,,,,I really only used the information that as given,1,36,2,1,mexican,1,DT,Conj_Left
+2019-05-30 19:52:15,2019-05-30 19:55:05,0,72.199.209.239,100,169,1,2019-05-30 19:55:05,R_1qdKzOExlz69E8T,,,,,32.8123016357421875,-116.91719818115234375,anonymous,EN,,,Ava,,,,,,,,1,1,1,2,2,50,49,49,1,49,49,50,1,,50,,,,,,,,,,,,,,,,,,,,,,1,28,2,1,black,2,DB,Conj_Right
+2019-05-30 19:47:13,2019-05-30 19:55:34,0,71.197.114.48,100,501,1,2019-05-30 19:55:35,R_bkCz7KRYnhH5YpX,,,,,38.6967010498046875,-121.3130035400390625,anonymous,EN,,,,Noah,,,,,,,1,2,1,2,2,50,50,0,2,57,65,76,2,0,,,,,,,,,,,,1,1,1,2,2,,,,,,because if both balls did not go through E would not have made it through the gate and B had a more likely chance of being blocked,1,29,1,1,white,2,DB,Conj_Left
+2019-05-30 19:43:51,2019-05-30 19:59:48,0,47.189.242.249,100,956,1,2019-05-30 19:59:49,R_yJCjMcrcSiwy7cJ,,,,,32.9656982421875,-96.88249969482421875,anonymous,EN,,Benjamin,,,,,,,,,1,1,2,2,2,76,35,8,2,89,64,98,2,,100,,,,,,,,,,,1,1,1,2,2,,,,,,Whether the 80% block appeared or not and where ball E was placed.,1,59,2,1,Caucasian,2,DB,Conj_Right
+2019-05-30 20:06:47,2019-05-30 20:11:21,0,69.131.227.84,100,273,1,2019-05-30 20:11:21,R_1Cmd6pGFzEKeiQi,,,,,46.572998046875,-122.7075042724609375,anonymous,EN,,,,,James,1,1,1,2,2,,,,,,,,,,,,,,,,37,64,0,1,32,73,100,2,30,,,,,,,,,,,,I thought it would be more likely that someone would say E went through because of A if E were closer.,1,19,1,1,Caucasian,2,DT,Conj_Left
+2019-05-30 20:29:36,2019-05-30 20:30:47,0,122.164.231.67,100,70,1,2019-05-30 20:30:47,R_3HCdTNeLftUe8gI,,,,,13.0843048095703125,80.280487060546875,anonymous,EN,,,Ava,,,,,,,,1,1,1,1,2,,,,,,,,,,,,,,,,,,,,,1,2,1,2,2,,,,,,,,,,,,,DB,Conj_Left
+2019-05-30 20:30:50,2019-05-30 20:32:59,0,122.164.231.67,100,128,1,2019-05-30 20:32:59,R_xsVSuq0B7F7lygh,,,,,13.0843048095703125,80.280487060546875,anonymous,EN,Emma,,,,,1,2,1,2,2,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,1,2,1,2,2,,,,,,,,DT,Conj_Left
+2019-05-30 20:30:39,2019-05-30 20:33:16,0,24.13.174.184,100,156,1,2019-05-30 20:33:16,R_1IzzC5CN3NGneDy,,,,,41.891998291015625,-87.6416015625,anonymous,EN,,Benjamin,,,,1,1,1,2,2,,,,,,,,,,,,,,,,26,76,0,1,25,73,100,1,28,,,,,,,,,,,,The likelihood of each ball going through the gate and how many balls it would take to move ball e,1,25,1,1,white,2,DT,Conj_Left
+2019-05-30 20:33:01,2019-05-30 20:54:08,0,122.164.231.67,100,1267,1,2019-05-30 20:54:09,R_3fUBvLa7MCY2Oyu,,,,,13.0843048095703125,80.280487060546875,anonymous,EN,,,,,James,,,,,,1,1,1,2,2,61,35,54,1,36,65,52,2,74,,,,,,,,,,,,,,,,,,,,,,Nice but over thinking survey.,1,1992,1,1,Asian,2,DB,Conj_Left
+2019-05-30 21:24:38,2019-05-30 21:26:59,0,196.17.67.211,100,141,1,2019-05-30 21:27:00,R_2QzxvKz8y1TfFig,,,,,34.0543975830078125,-118.2440032958984375,anonymous,EN,Emma,,,,,1,1,1,1,1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,1,1,1,1,1,,,,,,,,DT,Conj_Left
+2019-05-30 21:43:31,2019-05-30 22:11:27,0,67.84.85.155,100,1675,1,2019-05-30 22:11:27,R_22MoBJZuD7gqS1W,,,,,40.6737060546875,-73.533599853515625,anonymous,EN,,Benjamin,,,,1,1,1,2,2,,,,,,,,,,,,,,,,0,100,0,1,100,100,100,2,100,,,,,,,,,,,,The factors of force and gravity allowed me to make an estimate as to where and what ball caused the other ball to go through the gate.,1,31,2,1,White,1,DT,Conj_Left
+2019-05-30 19:01:46,2019-05-30 19:01:59,0,67.246.114.38,50,13,0,2019-05-30 22:21:21,R_1d1hr9MT2Nl4Xog,,,,,,,anonymous,EN,,,,,James,,,,,,1,1,1,1,1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,DB,Conj_Left
+2019-05-30 19:20:09,2019-05-30 19:22:07,0,208.38.240.182,50,118,0,2019-05-30 22:21:30,R_1nNhuFTjjwzrXpN,,,,,,,anonymous,EN,,"Benjamin ",,,,,,,,,1,2,1,1,1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,DB,Conj_Right
+2019-05-30 19:26:43,2019-05-30 19:28:04,0,73.155.50.63,50,80,0,2019-05-30 22:21:30,R_3L7omokcjFpdje9,,,,,,,anonymous,EN,,,,,James,,,,,,1,1,2,2,2,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,DB,Conj_Left
+2019-05-30 18:46:27,2019-05-30 18:59:32,0,104.129.18.211,12,785,0,2019-05-30 22:21:30,R_1ONNLHEzKHq0GDn,,,,,,,anonymous,EN,Emma,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,DB,Conj_Left
+2019-05-30 18:52:58,2019-05-30 19:07:50,0,157.51.125.125,72,891,0,2019-05-30 22:21:33,R_2xJCRhY32HsRlJ3,,,,,,,anonymous,EN,Emma,,,,,1,1,2,2,2,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,DT,Conj_Left
+2019-05-30 18:39:10,2019-05-30 18:47:08,0,108.195.92.66,73,477,0,2019-05-30 22:21:37,R_cwszm2xV0FhAq6R,,,,,,,anonymous,EN,,,,,James,1,2,2,1,1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,DT,Conj_Left
+2019-05-30 18:44:15,2019-05-30 18:46:43,0,107.185.127.204,49,147,0,2019-05-30 22:21:37,R_3W7qevqzPfHvm3T,,,,,,,anonymous,EN,,,,,James,,,,,,1,1,1,1,2,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,DB,Conj_Left
+2019-05-30 18:50:57,2019-05-30 18:51:27,0,136.49.182.219,7,29,0,2019-05-30 22:21:38,R_8oleGgORINDQ6gV,,,,,,,anonymous,EN,Emma,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,DT,Conj_Left
+2019-05-30 19:32:22,2019-05-30 19:33:26,0,66.66.3.100,6,64,0,2019-05-30 22:21:47,R_3fpivA0zpxIGOVK,,,,,,,anonymous,EN,,,,,James,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,DT,Conj_Right
+2019-05-30 19:30:35,2019-05-30 19:31:20,0,71.163.92.51,12,44,0,2019-05-30 22:22:02,R_89dKbDfQXnvldkJ,,,,,,,anonymous,EN,,,,,James,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,DB,Conj_Left
+2019-05-30 18:54:38,2019-05-30 18:57:35,0,71.231.229.30,84,176,0,2019-05-30 22:22:02,R_pbKRQf8Yfc6Ykq5,,,,,,,anonymous,EN,,Benjamin,,,,1,1,1,1,2,,,,,,,,,,,,,,,,13,83,97,2,,,,,,,,,,,,1,1,1,2,2,,,,,,,,DT,Conj_Right
+2019-05-30 19:46:18,2019-05-30 19:52:10,0,72.199.209.239,71,352,0,2019-05-30 22:22:02,R_OfL7elSluGVV637,,,,,,,anonymous,EN,,,,Noah,,,,,,,1,1,2,1,2,,,,,,,,,,,,,,,,,,,,,1,1,2,1,2,,,,,,,,,,,,,DB,Conj_Right
+2019-05-30 20:16:42,2019-05-30 20:22:25,0,98.249.138.19,71,342,0,2019-05-30 22:22:02,R_1IsjnCJvRb9MVWx,,,,,,,anonymous,EN,,Benjamin,,,,,,,,,1,1,1,1,2,,,,,,,,,,,,,,,,,,,,,2,1,2,2,1,,,,,,,,,,,,,DB,Conj_Left
