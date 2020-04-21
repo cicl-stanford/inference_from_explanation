@@ -441,7 +441,7 @@ df.plot = df.normality %>%
   
 df.text = df.plot %>% 
   count(structure, norm) %>% 
-  mutate(label = str_c("N = ", n),
+  mutate(label = str_c("n = ", n),
          selection = 1.05)
 
 ggplot(data = df.plot,
@@ -497,7 +497,7 @@ df.plot = df.normality %>%
 
 df.text = df.plot %>% 
   count(structure, norm) %>% 
-  mutate(label = str_c("N = ", n),
+  mutate(label = str_c("n = ", n),
          judgment = 55)
 
 ggplot(data = df.plot,
@@ -1189,7 +1189,7 @@ rm(list = ls()[!ls() %in% c("df.normality",
 
 ### Causal selections
 
-```{r fig.height=6, fig.width=8}
+```{r fig.height=6, fig.width=8, warning=F}
 set.seed(1)
 df.plot = df.structure %>% 
   mutate(selection = ifelse(selection == "abnormal", 1, 0),
@@ -1200,7 +1200,7 @@ df.plot = df.structure %>%
 df.text = df.plot %>% 
   distinct(participant, norm) %>% 
   count(norm) %>% 
-  mutate(label = str_c("N = ", n),
+  mutate(label = str_c("n = ", n),
          selection = 1.05,
          structure = NA)
 
@@ -1282,7 +1282,7 @@ df.plot = df.structure %>%
 
 df.text = df.plot %>% 
   count(explanation, norm) %>% 
-  mutate(label = str_c("N = ", n),
+  mutate(label = str_c("n = ", n),
          judgment = 55)
 
 ggplot(data = df.plot,
