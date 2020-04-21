@@ -10,28 +10,27 @@ output:
     highlight: tango
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(comment = "#>",
-                      fig.show = "hold")
-```
-
 # Load packages 
 
 ```{r, message=FALSE}
-library("knitr")      # for RMarkdown commands 
-library("kableExtra") # for nice tables
-library("janitor")    # for cleaning column names 
-library("brms")       # for Bayesian regression modeling
-library("tidybayes")  # for Bayesian regression modeling
-library("broom")      # for tidy regression results
-library("xtable")     # for latex tables
-library("ggeffects")  # for marginal effects 
-library("tidyverse")  # for data wrangling, visualization, etc. 
+library("knitr")       # for RMarkdown commands 
+library("kableExtra")  # for nice tables
+library("janitor")     # for cleaning column names 
+library("brms")        # for Bayesian regression modeling
+library("tidybayes")   # for Bayesian regression modeling
+library("broom")       # for tidy regression results
+library("xtable")      # for latex tables
+library("ggeffects")   # for marginal effects 
+library("tidyverse")   # for data wrangling, visualization, etc. 
 ```
 
 ```{r}
 # set ggplot theme 
 theme_set(theme_classic())
+
+# set knitr options
+opts_chunk$set(comment = "#>",
+               fig.show = "hold")
 ```
 
 # Functions 
@@ -39,7 +38,7 @@ theme_set(theme_classic())
 ```{r}
 regression_table = function(fit){
   fit %>% 
-    tidy() %>% 
+    tidy(prob = 0.95) %>% 
     filter(str_detect(term, "b_")) %>% 
     mutate(term = str_remove(term, "b_"),
            term = tolower(term)) %>% 
@@ -607,50 +606,50 @@ ggsave("../../figures/plots/normality_judgments_based_on_selections.pdf",
 
 ## Stats 
 
+### Means and standard deviations 
+
+```{r}
+df.normality %>% 
+  group_by(structure) %>% 
+  summarize(mean = mean(judgment),
+            sd = sd(judgment)) %>% 
+  print_table()
+```
+
 ### Bayesian regression on selection data
 
 ```{r}
 fit_normality_selection = brm(formula = selection ~ structure * norm,
-                                   family = "bernoulli",
-                                   data = df.normality %>% 
-                                     mutate(selection = ifelse(selection == "normal", 0, 1)),
-                                   seed = 1,
-                                   cores = 2,
-                                   file = "cache/fit_normality_selection")
+                              family = "bernoulli",
+                              data = df.normality %>% 
+                                mutate(selection = ifelse(selection == "normal", 0, 1)),
+                              seed = 1,
+                              cores = 2,
+                              file = "cache/fit_normality_selection")
 
 fit_normality_selection
 ```
 
 Predictions on probability scale: 
 
-```{r}
+```{r, warning=F}
 fit_normality_selection %>% 
   ggpredict(terms = c("structure", "norm"))
-```
-
-```{r}
-df.normality %>% 
-  count(structure, norm, selection) %>% 
-  group_by(structure, norm) %>% 
-  mutate(perc = n/sum(n)) %>% 
-  filter(selection == "abnormal")
 ```
 
 ### Bayesian regression on judgment data
 
 ```{r}
 fit_normality_judgment = brm(formula = judgment ~ structure * norm,
-                                  data = df.normality,
-                                  seed = 1,
-                                  cores = 2,
-                                  file = "cache/fit_normality_judgment")
+                             data = df.normality,
+                             seed = 1,
+                             cores = 2,
+                             file = "cache/fit_normality_judgment")
 
 fit_normality_judgment
 ```
 
 ### Judgments different from chance? 
-
-- double check that this is correct
 
 ```{r}
 fit_normality_judgment %>% 
@@ -666,14 +665,16 @@ fit_normality_judgment %>%
 ### Causal selections 
 
 ```{r}
-regression_table(fit_normality_selection) %>% 
+fit_normality_selection %>% 
+  regression_table() %>% 
   print_table()
 ```
 
 ### Normality judgments 
 
 ```{r}
-regression_table(fit_normality_judgment) %>% 
+fit_normality_judgment %>% 
+  regression_table() %>% 
   print_table()
 ```
 
@@ -705,7 +706,7 @@ df.stat_abnormal_data = read.csv(file = "../../data/learning_language_abnormal_m
   filter(!status == "Survey Preview", # exclude preview trials, 
          !ethnicity == "") # exclude people who did not make until it demographics
 
-# Reference clip Learning Trial and Judgment: Dark Motion Block is top, Ball A 
+# Reference clip Learning Trial and Judgment: Darkrm Motion Block is top, Ball A 
 # is abnormal (Recode values of DB condition)
 # Reference Slider: Conjunctive on the right side (100 - Definitely Conjunctive, 
 # 0 - Definitely Disjunctive) (Recode Conj_Left Condition)
@@ -785,9 +786,9 @@ df.stat_abnormal_judgments = df.stat_abnormal_data %>%
                            100 - judgment,
                            judgment)) %>% 
   rename(conjunctive_ball_abnormal = conjunctive_ball_a,
-        conjunctive_ball_normal = conjunctive_ball_b,
-        disjunctive_ball_abnormal = disjunctive_ball_a,
-        disjunctive_ball_normal = disjunctive_ball_b) %>% 
+         conjunctive_ball_normal = conjunctive_ball_b,
+         disjunctive_ball_abnormal = disjunctive_ball_a,
+         disjunctive_ball_normal = disjunctive_ball_b) %>% 
   arrange(participant) %>% 
   # define exclusion criteria 
   mutate(exclude = ifelse((conjunctive_ball_abnormal < conjunctive_ball_normal) &
@@ -1036,9 +1037,9 @@ df.pres_normal_judgments = df.pres_normal_data %>%
          value = ifelse(test = (norm_condition == "2" & str_detect(index, "agreement")),
                         yes = 100 - value,
                         no = value),
-         value = ifelse((norm_condition == "2" & str_detect(index, "selection")),
-                        3 - value,
-                        value))%>% 
+         value = ifelse(test = (norm_condition == "2" & str_detect(index, "selection")),
+                        yes = 3 - value,
+                        no = value))%>% 
   pivot_wider(names_from = index,
               values_from = value) %>% 
   mutate(conjunctive_selection = factor(conjunctive_selection,
@@ -1179,7 +1180,9 @@ rm(list = ls()[!ls() %in% c("df.normality",
                             "df.structure",
                             "df.structure.demo",
                             "regression_table",
-                            "print_table")])
+                            "print_table",
+                            "fit_normality_selection",
+                            "fit_normality_judgment")])
 ```
 
 ## Plots 
@@ -1191,8 +1194,8 @@ set.seed(1)
 df.plot = df.structure %>% 
   mutate(selection = ifelse(selection == "abnormal", 1, 0),
          norm = factor(norm,
-                            levels = c("statistical", "prescriptive"),
-                            labels = c("statistical\nnorm", "prescriptive\nnorm")))
+                       levels = c("statistical", "prescriptive"),
+                       labels = c("statistical\nnorm", "prescriptive\nnorm")))
   
 df.text = df.plot %>% 
   distinct(participant, norm) %>% 
@@ -1271,7 +1274,7 @@ set.seed(1)
 
 df.plot = df.structure %>% 
   select(participant, norm, explanation, judgment) %>% 
-                               distinct() %>% 
+  distinct() %>% 
   mutate(norm = factor(norm,
                        levels = c("statistical", "prescriptive"),
                        labels = c("statistical\nnorm", "prescriptive\nnorm")),
@@ -1395,6 +1398,29 @@ ggsave("../../figures/plots/structure_judgments_based_on_selections.pdf",
 
 ## Stats 
 
+### Causal selections 
+
+```{r}
+df.structure %>% 
+  count(structure, selection) %>% 
+  group_by(structure) %>% 
+  mutate(perc = n/sum(n)) %>% 
+  filter(selection == "abnormal") %>% 
+  select(-n) %>% 
+  print_table()
+```
+
+### Means and standard deviations 
+
+```{r}
+df.structure %>% 
+  group_by(explanation) %>% 
+  summarize(mean = mean(judgment),
+            sd = sd(judgment)) %>% 
+  print_table()
+```
+
+
 ### Bayesian regression on selections
 
 ```{r}
@@ -1426,14 +1452,16 @@ fit_structure_judgment
 ### Causal selections 
 
 ```{r}
-regression_table(fit_structure_selection) %>% 
+fit_structure_selection %>% 
+  regression_table() %>% 
   print_table()
 ```
 
 ### Structure judgments 
 
 ```{r}
-regression_table(fit_structure_judgment) %>% 
+fit_structure_judgment %>% 
+  regression_table() %>% 
   print_table()
 ```
 
@@ -1467,7 +1495,8 @@ df.structure %>%
   mutate(difference = judgment_abnormal - judgment_normal,
          n = n_abnormal + n_normal) %>% 
   select(-c(n_abnormal, n_normal)) %>% 
-  mutate_if(is.numeric, ~ round(., 2))
+  mutate_if(is.numeric, ~ round(., 2)) %>% 
+  print_table()
 ```
 
 # Comparisons 
