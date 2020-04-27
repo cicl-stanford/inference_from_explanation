@@ -1316,8 +1316,8 @@ ggplot(data = df.plot,
             size = 5) + 
   labs(x = "type of norm",
        y = "structure inference") + 
-  scale_fill_brewer(palette = "Set1") +
-  scale_color_brewer(palette = "Set1") +
+  scale_fill_manual(values = c("#984EA3", "#4DAF4A")) +
+  scale_color_manual(values = c("#984EA3", "#4DAF4A")) +
   scale_y_continuous(breaks = seq(-50, 50, 25),
                      labels = seq(-50, 50, 25),
                      limits = c(-50, 55)) + 
@@ -1332,7 +1332,7 @@ ggsave("../../figures/plots/structure_judgments.pdf",
 
 ### Individual differences 
 
-```{r fig.height=6, fig.width=8}
+```{r warning=F, fig.height=6, fig.width=8}
 set.seed(1)
 
 df.plot = df.structure %>% 
@@ -1382,8 +1382,8 @@ df.text = df.plot %>%
             size = 5) +
   labs(x = "type of norm",
        y = "structure inference") + 
-  scale_fill_brewer(palette = "Set1") +
-  scale_color_brewer(palette = "Set1") +
+  scale_fill_manual(values = c("#984EA3", "#4DAF4A")) +
+  scale_color_manual(values = c("#984EA3", "#4DAF4A")) +
   scale_y_continuous(breaks = seq(-50, 50, 25),
                      labels = seq(-50, 50, 25),
                      limits = c(-50, 55)) + 
