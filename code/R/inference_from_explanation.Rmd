@@ -480,7 +480,7 @@ ggplot(data = df.plot,
         legend.position = "bottom",
         axis.title.x = element_blank(),
         axis.title.y = element_blank(),
-        plot.margin = margin(t = 0.8, unit = "cm"))
+        plot.margin = margin(t = 1, l = 0.2, r = 0.2, unit = "cm"))
 
 ggsave("../../figures/plots/normality_selections.pdf",
        width = 8,
@@ -545,7 +545,7 @@ ggplot(data = df.plot,
   theme(text = element_text(size = 24),
         legend.position = "bottom",
         axis.title.x = element_blank(),
-        plot.margin = margin(t = 0.8, unit = "cm"))
+        plot.margin = margin(t = 1, l = 0.2, r = 0.2, unit = "cm"))
 
 ggsave("../../figures/plots/normality_judgments.pdf",
        width = 8,
@@ -607,7 +607,7 @@ df.text = df.plot %>%
   theme(text = element_text(size = 24),
         legend.position = "bottom",
         axis.title.x = element_blank(),
-        plot.margin = margin(t = 0.8, unit = "cm"))
+        plot.margin = margin(t = 1, l = 0.2, r = 0.2, unit = "cm"))
 
 ggsave("../../figures/plots/normality_judgments_based_on_selections.pdf",
        width = 8,
@@ -1340,7 +1340,7 @@ ggplot(data = df.plot,
   theme(text = element_text(size = 24),
         legend.position = "bottom",
         axis.title.x = element_blank(),
-        plot.margin = margin(t = 0.8, unit = "cm"))
+        plot.margin = margin(t = 1, l = 0.2, r = 0.2, unit = "cm"))
 
 ggsave("../../figures/plots/structure_judgments.pdf",
        width = 8,
@@ -1409,7 +1409,7 @@ df.text = df.plot %>%
   theme(text = element_text(size = 24),
         legend.position = "bottom",
         axis.title.x = element_blank(),
-        plot.margin = margin(t = 0.8, unit = "cm"))
+        plot.margin = margin(t = 1, l = 0.2, r = 0.2, unit = "cm"))
 
 ggsave("../../figures/plots/structure_judgments_based_on_selections.pdf",
        width = 8,
