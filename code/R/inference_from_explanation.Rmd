@@ -430,7 +430,7 @@ rm(list = ls()[!ls() %in% c("df.normality",
 
 ### Causal selections 
 
-```{r fig.height=6, fig.width=8}
+```{r fig.height=6, fig.width=8, warning=F}
 set.seed(1)
 
 df.plot = df.normality %>% 
@@ -479,7 +479,6 @@ ggplot(data = df.plot,
   theme(text = element_text(size = 24),
         legend.position = "bottom",
         axis.title.x = element_blank(),
-        axis.title.y = element_blank(),
         plot.margin = margin(t = 1, l = 0.2, r = 0.2, unit = "cm"))
 
 ggsave("../../figures/plots/normality_selections.pdf",
@@ -1258,7 +1257,7 @@ p = ggplot(data = df.plot,
         legend.position = "bottom",
         axis.title.x = element_blank(),
         axis.title.y = element_blank(),
-        plot.margin = margin(t = 0.8, unit = "cm"))
+        plot.margin = margin(t = 1, l = 0.2, r = 0.2, unit = "cm"))
 
 # hack to link the dodged points:
 # https://stackoverflow.com/questions/51737201/how-to-draw-line-between-dodged-geometry-in-ggplot
