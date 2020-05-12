@@ -1353,6 +1353,15 @@ df.text = df.plot %>%
          label = str_c("n = ", n),
          explanation = NA)
 
+# remove the two small groups 
+df.plot = df.plot %>% 
+  filter(selection %in% c("D: abnormal\nC: abnormal",
+                          "D: normal\nC: abnormal"))
+
+df.text = df.text %>% 
+  filter(selection %in% c("D: abnormal\nC: abnormal",
+                          "D: normal\nC: abnormal"))
+
   ggplot(data = df.plot,
          mapping = aes(x = selection, 
                      y = judgment,
@@ -1371,18 +1380,18 @@ df.text = df.plot %>%
                position = position_dodge(width = 0.5),
                size = 1.5,
                shape = 21) + 
-  annotate(x = c(0.55, 0.55),
+  annotate(x = c(0.48, 0.48),
            y = c(-50, 50),
            geom = "text",
            label = c("preference for\ndisjunctive structure", "preference for\nconjunctive structure"),
            hjust = c(0, 1),
            angle = 90,
-           size = 5) + 
+           size = 4.5) + 
   geom_text(data = df.text,
             mapping = aes(label = label),
             position = position_dodge(width = 0.5),
             size = 5) +
-  labs(x = "type of norm",
+  labs(x = "participants' causal selections",
        y = "structure inference") + 
   scale_fill_manual(values = c("#984EA3", "#4DAF4A")) +
   scale_color_manual(values = c("#984EA3", "#4DAF4A")) +
@@ -1393,7 +1402,7 @@ df.text = df.plot %>%
                   ylim = c(-50, 50)) +
   theme(text = element_text(size = 24),
         legend.position = "bottom",
-        axis.title.x = element_blank(),
+        axis.title.x = element_text(margin = margin(t = 0.5, unit = "cm")),
         plot.margin = margin(t = 1, l = 0.2, r = 0.2, unit = "cm"))
 
 ggsave("../../figures/plots/structure_judgments_based_on_selections.pdf",
