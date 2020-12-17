@@ -6,6 +6,7 @@ output:
   bookdown::html_document2:
     toc: true
     toc_depth: 4
+    toc_float: true
     theme: cosmo
     highlight: tango
 ---
@@ -18,7 +19,7 @@ library("kableExtra")  # for nice tables
 library("janitor")     # for cleaning column names 
 library("brms")        # for Bayesian regression modeling
 library("tidybayes")   # for Bayesian regression modeling
-library("broom")       # for tidy regression results
+library("broom.mixed") # for tidy regression results
 library("xtable")      # for latex tables
 library("ggeffects")   # for marginal effects 
 library("tidyverse")   # for data wrangling, visualization, etc. 
@@ -31,21 +32,17 @@ theme_set(theme_classic())
 # set knitr options
 opts_chunk$set(comment = "#>",
                fig.show = "hold")
+
+# suppress summarise() grouping warning 
+options(dplyr.summarise.inform = F)
+
+# use effects contrast coding to interpret effects from categorical variables as main effects 
+options(contrasts = c("contr.sum", "contr.poly"))
 ```
 
 # Functions 
 
 ```{r}
-regression_table = function(fit){
-  fit %>% 
-    tidy(prob = 0.95) %>% 
-    filter(str_detect(term, "b_")) %>% 
-    mutate(term = str_remove(term, "b_"),
-           term = tolower(term)) %>% 
-    mutate_if(is.numeric, ~ round(., 2)) %>% 
-    rename(`lower 95% CI` = lower,
-           `upper 95% CI` = upper)}
-
 # function for printing out html or latex tables 
 print_table = function(data, format = "html", digits = 2){
   if(format == "html"){
@@ -341,7 +338,10 @@ df.normality = df.stat_con_judgments %>%
               select(- learn_condition)) %>% 
   filter(exclude == 0) %>% # filter based on exclusion criteria
   mutate(participant = 1:n()) %>% 
+  mutate(structure = factor(structure, levels = c("conjunctive", "disjunctive")),
+         norm = factor(norm, levels = c("statistical", "prescriptive"))) %>% 
   select(-condition)
+  
 ```
 
 ## Demographics 
@@ -407,7 +407,8 @@ df.normality.demo %>%
 
 df.normality.demo %>% 
   filter(exclude == 0) %>%
-  count(norm, structure)
+  count(norm, structure) %>% 
+  print_table()
 
 df.normality.demo %>% 
   summarize(n_total = n(),
@@ -417,12 +418,13 @@ df.normality.demo %>%
             n_non_binary = sum(gender == "Non-binary"),
             mean_age = mean(age, na.rm = T),
             sd_age = sd(age, na.rm = T)) %>% 
-  mutate_at(vars(contains("age")), round)
+  mutate_at(vars(contains("age")), round) %>% 
+  pivot_longer(cols = everything()) %>% 
+  print_table()
 
 # remove unnecessary variables
 rm(list = ls()[!ls() %in% c("df.normality",
                             "df.normality.demo",
-                            "regression_table",
                             "print_table")])
 ```
 
@@ -651,24 +653,27 @@ fit_normality_judgment = brm(formula = judgment ~ structure * norm,
 fit_normality_judgment
 ```
 
-### Judgments different from chance? 
-
-```{r}
-fit_normality_judgment %>% 
-  posterior_samples() %>% 
-  clean_names() %>% 
-  mutate(disjunctive = b_intercept + b_structuredisjunctive) %>% 
-  pull(disjunctive) %>% 
-  mean_hdci()
-```
-
 ## Tables
 
 ### Causal selections 
 
 ```{r}
 fit_normality_selection %>% 
-  regression_table() %>% 
+  gather_draws(b_Intercept, 
+               b_structure1,
+               b_norm1,
+               `b_structure1:norm1`) %>% 
+  mean_hdi() %>% 
+  rename(term = .variable,
+         estimate = .value,
+         `lower 95% CI` = .lower,
+          `upper 95% CI` = .upper) %>% 
+  select(-c(.width, .point, .interval)) %>% 
+  mutate(term = tolower(term),
+         term = str_remove_all(term, "b_"),
+         term = str_remove_all(term, "1"),
+         term = factor(term, levels = c("intercept", "structure", "norm", "structure:norm"))) %>% 
+  arrange(term) %>% 
   print_table()
 ```
 
@@ -676,7 +681,21 @@ fit_normality_selection %>%
 
 ```{r}
 fit_normality_judgment %>% 
-  regression_table() %>% 
+  gather_draws(b_Intercept, 
+               b_structure1,
+               b_norm1,
+               `b_structure1:norm1`) %>% 
+  mean_hdi() %>% 
+  rename(term = .variable,
+         estimate = .value,
+         `lower 95% CI` = .lower,
+          `upper 95% CI` = .upper) %>% 
+  select(-c(.width, .point, .interval)) %>% 
+  mutate(term = tolower(term),
+         term = str_remove_all(term, "b_"),
+         term = str_remove_all(term, "1"),
+         term = factor(term, levels = c("intercept", "structure", "norm", "structure:norm"))) %>% 
+  arrange(term) %>% 
   print_table()
 ```
 
@@ -1090,14 +1109,17 @@ df.structure = df.stat_abnormal_judgments %>%
   select(-c(norm_condition, structure)) %>% 
   rename(conjunctive_cause = conjunctive, 
          disjunctive_cause = disjunctive) %>% 
-  mutate(participant = 1:n()) %>% 
+  mutate(participant = 1:n(),
+         across(c(contains("disjunctive"), contains("conjunctive")), ~ as.character(.))) %>% 
   pivot_longer(names_to = c("structure", "index"),
                names_sep = "_",
-               cols = c(contains("disjunctive"), contains("conjunctive")),
-               values_ptypes = list(value = "as.character")) %>% 
+               cols = c(contains("disjunctive"), contains("conjunctive"))) %>% 
   pivot_wider(names_from = index,
               values_from = value) %>% 
-  mutate_at(vars(cause, abnormal, normal), ~ as.numeric(.))
+  mutate_at(vars(cause, abnormal, normal), ~ as.numeric(.)) %>% 
+  mutate(selection = factor(selection, levels = c("abnormal", "normal")),
+    structure = factor(structure, levels = c("conjunctive", "disjunctive")),
+         norm = factor(norm, levels = c("statistical", "prescriptive")))
 ```
 
 ## Demographics
@@ -1163,7 +1185,8 @@ df.structure.demo %>%
 
 df.structure.demo %>% 
   filter(exclude == 0) %>%
-  count(norm, normality)
+  count(norm, normality) %>% 
+  print_table()
 
 df.structure.demo %>% 
   # filter(exclude == 0) %>% 
@@ -1174,14 +1197,15 @@ df.structure.demo %>%
             n_non_binary = sum(gender == "Non-binary"),
             mean_age = mean(age, na.rm = T),
             sd_age = sd(age, na.rm = T)) %>% 
-  mutate_at(vars(contains("age")), round)
+  mutate_at(vars(contains("age")), round) %>% 
+  pivot_longer(cols = everything()) %>% 
+  print_table()
 
 # remove unnecessary variables
 rm(list = ls()[!ls() %in% c("df.normality",
                             "df.normality.demo",
                             "df.structure",
                             "df.structure.demo",
-                            "regression_table",
                             "print_table",
                             "fit_normality_selection",
                             "fit_normality_judgment")])
@@ -1213,10 +1237,10 @@ df.line = df.plot %>%
   mutate(x = c(0.75, 1.25, 1.75, 2.25))
 
 p = ggplot(data = df.plot,
-       mapping = aes(x = norm, 
-                     y = selection,
-                     group = structure,
-                     fill = structure)) +
+           mapping = aes(x = norm, 
+                         y = selection,
+                         group = structure,
+                         fill = structure)) +
   geom_hline(yintercept = 0.5, 
              linetype = 2) + 
   stat_summary(fun.data = "mean_cl_boot",
@@ -1225,7 +1249,8 @@ p = ggplot(data = df.plot,
                size = 1.5,
                shape = 21,
                alpha = 0) +
-  geom_point(aes(color = condition), position = position_dodge(width = 0.5), 
+  geom_point(mapping = aes(color = condition),
+             position = position_dodge(width = 0.5), 
              alpha = 0, show.legend = FALSE) + 
   geom_text(data = df.text,
             mapping = aes(label = label),
@@ -1353,14 +1378,14 @@ df.text = df.plot %>%
          label = str_c("n = ", n),
          explanation = NA)
 
-# remove the two small groups 
-df.plot = df.plot %>% 
-  filter(selection %in% c("D: abnormal\nC: abnormal",
-                          "D: normal\nC: abnormal"))
-
-df.text = df.text %>% 
-  filter(selection %in% c("D: abnormal\nC: abnormal",
-                          "D: normal\nC: abnormal"))
+# # remove the two small groups 
+# df.plot = df.plot %>% 
+#   filter(selection %in% c("D: abnormal\nC: abnormal",
+#                           "D: normal\nC: abnormal"))
+# 
+# df.text = df.text %>% 
+#   filter(selection %in% c("D: abnormal\nC: abnormal",
+#                           "D: normal\nC: abnormal"))
 
   ggplot(data = df.plot,
          mapping = aes(x = selection, 
@@ -1440,8 +1465,7 @@ df.structure %>%
 ```{r}
 fit_structure_selection = brm(formula = selection ~ 1 + structure * norm + (1 | participant),
                               family = "bernoulli",
-                              data = df.structure %>% 
-                                mutate(selection = ifelse(selection == "normal", 0, 1)),
+                              data = df.structure,
                               seed = 1,
                               cores = 2,
                               file = "cache/fit_structure_selection")
@@ -1467,7 +1491,15 @@ fit_structure_judgment
 
 ```{r}
 fit_structure_selection %>% 
-  regression_table() %>% 
+  tidy(conf.method = "HPDinterval",
+         fix.intercept = F) %>% 
+    filter(effect == "fixed") %>% 
+    mutate(term = tolower(term),
+           term = str_remove_all(term, "1"),
+           across(where(is.numeric), ~ round(., 2))) %>% 
+    rename(`lower 95% CI` = conf.low,
+           `upper 95% CI` = conf.high) %>% 
+    select(-c(effect:group,std.error)) %>% 
   print_table()
 ```
 
@@ -1475,7 +1507,21 @@ fit_structure_selection %>%
 
 ```{r}
 fit_structure_judgment %>% 
-  regression_table() %>% 
+  gather_draws(b_Intercept, 
+               b_explanation1,
+               b_norm1,
+               `b_explanation1:norm1`) %>% 
+  mean_hdi() %>% 
+  rename(term = .variable,
+         estimate = .value,
+         `lower 95% CI` = .lower,
+          `upper 95% CI` = .upper) %>% 
+  select(-c(.width, .point, .interval)) %>% 
+  mutate(term = tolower(term),
+         term = str_remove_all(term, "b_"),
+         term = str_remove_all(term, "1"),
+         term = factor(term, levels = c("intercept", "explanation", "norm", "explanation:norm"))) %>% 
+  arrange(term) %>% 
   print_table()
 ```
 
@@ -1542,3 +1588,10 @@ df.structure %>%
             judgment_sd = sd(judgment)) %>% 
   mutate_if(is.numeric, ~ round(., 2))
 ```
+
+# Session Info 
+
+```{r}
+sessionInfo()
+```
+
