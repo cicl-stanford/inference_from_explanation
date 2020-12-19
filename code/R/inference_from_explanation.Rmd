@@ -22,6 +22,10 @@ library("tidybayes")   # for Bayesian regression modeling
 library("broom.mixed") # for tidy regression results
 library("xtable")      # for latex tables
 library("ggeffects")   # for marginal effects 
+library("car")         # for ANOVAs
+library("lme4")        # for linear mixed effects models
+library("effectsize")  # for calculating effect sizes
+library("pwr")         # for power analysis
 library("tidyverse")   # for data wrangling, visualization, etc. 
 ```
 
@@ -1566,28 +1570,178 @@ df.structure %>%
 df.normality %>% 
   group_by(structure) %>% 
   summarize(percentage = sum(selection == "abnormal")/n()) %>% 
-  mutate_if(is.numeric, ~ round(., 2) * 100)
+  mutate(across(where(is.numeric), ~ round(., 2) * 100))
 
 # experiment 1: normality inference as a function of causal structure 
 df.normality %>% 
   group_by(structure) %>% 
   summarize(judgment_mean = mean(judgment),
             judgment_sd = sd(judgment)) %>% 
-  mutate_if(is.numeric, ~ round(., 2))
+  mutate(across(where(is.numeric), ~ round(., 2)))
 
 # experiment 2: percentage of choosing the abnormal cause as a function of causal structure
 df.structure %>% 
   group_by(structure) %>% 
   summarize(percentage = sum(selection == "abnormal")/n()) %>% 
-  mutate_if(is.numeric, ~ round(., 2) * 100)
+  mutate(across(where(is.numeric), ~ round(., 2) * 100))
 
 # experiment 2: structure inference as a function of normality
 df.structure %>% 
   group_by(explanation) %>% 
   summarize(judgment_mean = mean(judgment),
             judgment_sd = sd(judgment)) %>% 
-  mutate_if(is.numeric, ~ round(., 2))
+  mutate(across(where(is.numeric), ~ round(., 2)))
 ```
+
+# Appendix 
+
+## Frequentist analysis 
+
+### Experiment 1
+
+#### Causal selections 
+
+```{r}
+# model fit 
+ffit_normality_selection = glm(formula = selection ~ structure * norm,
+                               family = "binomial",
+                               data = df.normality)
+
+# analysis of deviance & effect size
+aov_normality_selection = Anova(ffit_normality_selection) %>% 
+  as_tibble(rownames = "Term") %>% 
+  mutate(cramers_v = map(`LR Chisq`, ~ chisq_to_cramers_v(chisq = .,
+                                                          n = nrow(df.normality),
+                                                          nrow = 2, 
+                                                          ncol = 2))) %>% 
+  unnest(cramers_v)
+
+aov_normality_selection %>% 
+  print_table()
+```
+##### Power analysis 
+
+```{r}
+table_normality_selection = table(df.normality$structure,
+                                  df.normality$selection)
+
+pwr.chisq.test(w = table_normality_selection %>% 
+                 chisq.test() %>% 
+                 .[1] %>% 
+                 as.numeric(),
+               N = sum(table_normality_selection),
+               df = 1)
+```
+
+#### Normality inference 
+
+```{r}
+# model fit 
+ffit_normality_judgment = lm(formula = judgment ~ structure * norm,
+                             data = df.normality)
+
+# anova 
+aov_normality_judgment = Anova(ffit_normality_judgment)
+
+aov_normality_judgment %>%
+  as_tibble(rownames = "Term") %>% 
+  print_table()
+
+# partial eta squared 
+eta_squared(ffit_normality_judgment,
+            ci = 0.95) %>% 
+  print_table()
+```
+
+##### Power analysis 
+
+```{r}
+# post-hoc power analysis 
+pwr.anova.test(k = 2,
+               n = df.normality %>% 
+                 count(structure) %>%
+                 .$n %>% 
+                 min(),
+               f = aov_normality_judgment$`F value`[1])
+```
+
+
+### Experiment 2
+
+#### Causal selections 
+
+```{r}
+# model fit 
+ffit_structure_selection = glmer(formula = selection ~ 1 + structure * norm + (1 | participant),
+                                 family = "binomial",
+                                 data = df.structure)
+
+# analysis of deviance & effect size
+aov_structure_selection = Anova(ffit_structure_selection) %>% 
+  as_tibble(rownames = "Term") %>% 
+  mutate(cramers_v = map(`Chisq`, ~ chisq_to_cramers_v(chisq = .,
+                                                          n = nrow(df.structure),
+                                                          nrow = 2, 
+                                                          ncol = 2))) %>% 
+  unnest(cramers_v)
+
+aov_structure_selection %>% 
+  print_table()
+```
+##### Power analysis 
+
+```{r}
+# post-hoc power analysis on the effect of structure on selections
+table_structure_selection = table(df.structure$structure,
+                                  df.structure$selection)
+
+pwr.chisq.test(w = table_structure_selection %>% 
+                 chisq.test() %>% 
+                 .[1] %>% 
+                 as.numeric(),
+               N = sum(table_normality_selection),
+               df = 1)
+```
+
+#### Structure inference 
+
+```{r}
+# model fit 
+ffit_structure_judgment = lm(formula = judgment ~ explanation * norm,
+                             data = df.structure %>% 
+                               select(participant,
+                                      norm,
+                                      explanation,
+                                      judgment) %>% 
+                               distinct())
+
+# anova 
+aov_structure_judgment = Anova(ffit_structure_judgment)
+
+aov_structure_judgment %>%
+  as_tibble(rownames = "Term") %>% 
+  print_table()
+  
+# partial eta squared 
+eta_squared(ffit_structure_judgment,
+            ci = 0.95) %>% 
+  print_table()
+```
+
+##### Power analysis 
+
+```{r}
+# post-hoc power analysis 
+pwr.anova.test(k = 2,
+               n = df.structure %>% 
+                 select(participant, norm, explanation, judgment) %>% 
+                 distinct() %>% 
+                 count(explanation) %>%
+                 .$n %>% 
+                 min(),
+               f = aov_structure_judgment$`F value`[1])
+```
+
 
 # Session Info 
 
