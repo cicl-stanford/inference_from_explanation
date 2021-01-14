@@ -1409,7 +1409,7 @@ df.text = df.plot %>%
                position = position_dodge(width = 0.5),
                size = 1.5,
                shape = 21) + 
-  annotate(x = c(0.48, 0.48),
+  annotate(x = c(0.54, 0.54),
            y = c(-50, 50),
            geom = "text",
            label = c("preference for\ndisjunctive structure", "preference for\nconjunctive structure"),
