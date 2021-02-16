@@ -13,7 +13,7 @@ output:
 
 # Load packages 
 
-```{r, message=FALSE}
+```{r, message=FALSE, warning=FALSE}
 library("knitr")       # for RMarkdown commands 
 library("kableExtra")  # for nice tables
 library("janitor")     # for cleaning column names 
@@ -34,7 +34,7 @@ library("tidyverse")   # for data wrangling, visualization, etc.
 theme_set(theme_classic())
 
 # set knitr options
-opts_chunk$set(comment = "#>",
+opts_chunk$set(comment = "",
                fig.show = "hold")
 
 # suppress summarise() grouping warning 
@@ -1608,7 +1608,8 @@ ffit_normality_selection = glm(formula = selection ~ structure * norm,
                                data = df.normality)
 
 # analysis of deviance & effect size
-aov_normality_selection = Anova(ffit_normality_selection) %>% 
+aov_normality_selection = Anova(ffit_normality_selection,
+                                type = 3) %>% 
   as_tibble(rownames = "Term") %>% 
   mutate(cramers_v = map(`LR Chisq`, ~ chisq_to_cramers_v(chisq = .,
                                                           n = nrow(df.normality),
@@ -1619,6 +1620,8 @@ aov_normality_selection = Anova(ffit_normality_selection) %>%
 aov_normality_selection %>% 
   print_table()
 ```
+
+
 ##### Power analysis 
 
 ```{r}
@@ -1641,7 +1644,8 @@ ffit_normality_judgment = lm(formula = judgment ~ structure * norm,
                              data = df.normality)
 
 # anova 
-aov_normality_judgment = Anova(ffit_normality_judgment)
+aov_normality_judgment = Anova(ffit_normality_judgment,
+                               type = 3)
 
 aov_normality_judgment %>%
   as_tibble(rownames = "Term") %>% 
@@ -1677,7 +1681,8 @@ ffit_structure_selection = glmer(formula = selection ~ 1 + structure * norm + (1
                                  data = df.structure)
 
 # analysis of deviance & effect size
-aov_structure_selection = Anova(ffit_structure_selection) %>% 
+aov_structure_selection = Anova(ffit_structure_selection,
+                                type = 3) %>% 
   as_tibble(rownames = "Term") %>% 
   mutate(cramers_v = map(`Chisq`, ~ chisq_to_cramers_v(chisq = .,
                                                           n = nrow(df.structure),
@@ -1716,7 +1721,8 @@ ffit_structure_judgment = lm(formula = judgment ~ explanation * norm,
                                distinct())
 
 # anova 
-aov_structure_judgment = Anova(ffit_structure_judgment)
+aov_structure_judgment = Anova(ffit_structure_judgment,
+                               type = 3)
 
 aov_structure_judgment %>%
   as_tibble(rownames = "Term") %>% 
