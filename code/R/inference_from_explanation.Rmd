@@ -72,7 +72,7 @@ print_table = function(data, format = "html", digits = 2){
 
 ```{r}
 # CONJUNCTIVE STRUCTURE: STATISTICAL NORMS 
-df.stat_con_data = read.csv(file = "../../data/learning_language_conjunctive_main.csv",
+df.stat_con_data = read.csv(file = "../../data/statistical_conjunctive.csv",
                    stringsAsFactors = F) %>% 
   filter(row_number() > 2) %>% # additional rows in qualtrics csv
   clean_names() %>% 
@@ -132,7 +132,7 @@ df.stat_con_judgments = df.stat_con_data %>%
          (conjunctive < 50), 0, 1))
 
 # CONJUNCTIVE STRUCTURE: PRESCRIPTIVE NORMS 
-df.pres_con_data = read.csv(file = "../../data/prescriptive_conjunctive_main.csv",
+df.pres_con_data = read.csv(file = "../../data/prescriptive_conjunctive.csv",
                    stringsAsFactors = F) %>% 
   filter(row_number() > 2) %>% # additional rows in qualtrics csv
   clean_names() %>% 
@@ -194,7 +194,7 @@ df.pres_con_judgments = df.pres_con_data %>%
          (conjunctive < 50), 0, 1))
 
 # DISJUNCTIVE STRUCTURE: STATISTICAL NORMS 
-df.stat_dis_data = read.csv(file = "../../data/learning_language_disjunctive_main.csv",
+df.stat_dis_data = read.csv(file = "../../data/statistical_disjunctive.csv",
                    stringsAsFactors = F) %>% 
   filter(row_number() > 2) %>% # additional rows in qualtrics csv
   clean_names() %>% 
@@ -257,7 +257,7 @@ df.stat_dis_judgments = df.stat_dis_data %>%
          (disjunctive > 50), 0, 1))
 
 # DISJUNCTIVE STRUCTURE: PRESCRIPTIVE NORMS 
-df.pres_dis_data = read.csv(file = "../../data/prescriptive_disjunctive_main.csv",
+df.pres_dis_data = read.csv(file = "../../data/prescriptive_disjunctive.csv",
                    stringsAsFactors = F) %>% 
   filter(row_number() > 2) %>% # additional rows in qualtrics csv
   clean_names() %>% 
@@ -724,7 +724,7 @@ df.normality %>%
 
 ```{r}
 # ABNORMAL EXPLANATION: STATISTICAL NORM 
-df.stat_abnormal_data = read.csv(file = "../../data/learning_language_abnormal_main.csv",
+df.stat_abnormal_data = read.csv(file = "../../data/statistical_abnormal.csv",
                    stringsAsFactors = F) %>% 
   filter(row_number() > 2) %>% # additional rows in qualtrics csv
   clean_names() %>% 
@@ -822,7 +822,7 @@ df.stat_abnormal_judgments = df.stat_abnormal_data %>%
          (disjunctive > 50), 0, 1))
 
 # ABNORMAL EXPLANATION: PRESCRIPTIVE NORM 
-df.pres_abnormal_data = read.csv(file = "../../data/prescriptive_abnormal_main.csv",
+df.pres_abnormal_data = read.csv(file = "../../data/prescriptive_abnormal.csv",
                    stringsAsFactors = F) %>% 
   filter(row_number() > 2) %>% # additional rows in qualtrics csv
   clean_names() %>% 
@@ -908,7 +908,7 @@ df.pres_abnormal_judgments = df.pres_abnormal_data %>%
     no = 1))
 
 # NORMAL EXPLANATION: STATISTICAL NORMS 
-df.stat_normal_data = read.csv(file = "../../data/learning_language_normal_main.csv",
+df.stat_normal_data = read.csv(file = "../../data/statistical_normal.csv",
                    stringsAsFactors = F) %>% 
   filter(row_number() > 2) %>% # additional rows in qualtrics csv
   clean_names() %>% 
@@ -1005,7 +1005,7 @@ df.stat_normal_judgments = df.stat_normal_data %>%
          (disjunctive > 50), 0, 1))
 
 # NORMAL EXPLANATION: PRESCRIPTIVE NORMS 
-df.pres_normal_data = read.csv(file = "../../data/prescriptive_normal_main.csv",
+df.pres_normal_data = read.csv(file = "../../data/prescriptive_normal.csv",
                    stringsAsFactors = F) %>% 
   filter(row_number() > 2) %>% # additional rows in qualtrics csv
   clean_names() %>% 
@@ -1381,15 +1381,6 @@ df.text = df.plot %>%
   mutate(judgment = 55,
          label = str_c("n = ", n),
          explanation = NA)
-
-# # remove the two small groups 
-# df.plot = df.plot %>% 
-#   filter(selection %in% c("D: abnormal\nC: abnormal",
-#                           "D: normal\nC: abnormal"))
-# 
-# df.text = df.text %>% 
-#   filter(selection %in% c("D: abnormal\nC: abnormal",
-#                           "D: normal\nC: abnormal"))
 
   ggplot(data = df.plot,
          mapping = aes(x = selection, 
