@@ -36,17 +36,17 @@ Contains the qualtrics files for all of the experiments.
 
 Experiment 1: Normality inference 
 
-- statistical_conjunctive.qsf: statistical norm, conjunctive structure
-- statistical_disjunctive.qsf: statistical norm, disjunctive structure
-- prescriptive_conjunctive.qsf: prescriptive norm, conjunctive structure
-- prescriptive_disjunctive.qsf: prescriptive norm, disjunctive structure
+- `statistical_conjunctive.qsf`: statistical norm, conjunctive structure
+- `statistical_disjunctive.qsf`: statistical norm, disjunctive structure
+- `prescriptive_conjunctive.qsf`: prescriptive norm, conjunctive structure
+- `prescriptive_disjunctive.qsf`: prescriptive norm, disjunctive structure
 
 Experiment 2: Structure inference 
 
-- statistical_abnormal.qsf: statistical norm, abnormal event
-- statistical_normal.qsf: statistical norm, normal event
-- prescriptive_normal.qsf: prescriptive norm, abnormal event
-- prescriptive_abnormal.qsf: prescriptive norm, normal event
+- `statistical_abnormal.qsf`: statistical norm, abnormal event
+- `statistical_normal.qsf`: statistical norm, normal event
+- `prescriptive_normal.qsf`: prescriptive norm, abnormal event
+- `prescriptive_abnormal.qsf`: prescriptive norm, normal event
 
 ### data 
 
