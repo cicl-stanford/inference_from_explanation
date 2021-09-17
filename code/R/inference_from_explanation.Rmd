@@ -26,6 +26,7 @@ library("car")         # for ANOVAs
 library("lme4")        # for linear mixed effects models
 library("effectsize")  # for calculating effect sizes
 library("pwr")         # for power analysis
+library("patchwork")   # for figure panels
 library("tidyverse")   # for data wrangling, visualization, etc. 
 ```
 
@@ -422,7 +423,7 @@ df.normality.demo %>%
             n_non_binary = sum(gender == "Non-binary"),
             mean_age = mean(age, na.rm = T),
             sd_age = sd(age, na.rm = T)) %>% 
-  mutate_at(vars(contains("age")), round) %>% 
+  mutate(across(contains("age"), round)) %>% 
   pivot_longer(cols = everything()) %>% 
   print_table()
 
@@ -444,18 +445,17 @@ df.plot = df.normality %>%
          norm = factor(norm,
                        levels = c("statistical", "prescriptive"),
                        labels = c("statistical\nnorm", "prescriptive\nnorm")))
-  
+
 df.text = df.plot %>% 
   count(structure, norm) %>% 
   mutate(label = str_c("n = ", n),
          selection = 1.05)
 
-ggplot(data = df.plot,
-       # mapping = aes(x = condition, 
-       mapping = aes(x = norm, 
-                     y = selection,
-                     group = structure,
-                     fill = structure)) +
+p.exp1.selections = ggplot(data = df.plot,
+                           mapping = aes(x = norm, 
+                                         y = selection,
+                                         group = structure,
+                                         fill = structure)) +
   geom_hline(yintercept = 0.5, 
              linetype = 2) + 
   stat_summary(fun.data = "mean_cl_boot",
@@ -468,7 +468,8 @@ ggplot(data = df.plot,
             position = position_dodge(width = 0.5),
             size = 6) +
   labs(x = "type of norm",
-       y = "% abnormal cause selections") +
+       y = "% abnormal cause\nselections",
+       title = "Experiment 1") +
   scale_fill_brewer(palette = "Set1") +
   scale_y_continuous(breaks = seq(0, 1, 0.25),
                      labels = str_c(seq(0, 100, 25), "%"),
@@ -478,9 +479,15 @@ ggplot(data = df.plot,
   theme(text = element_text(size = 24),
         legend.position = "bottom",
         axis.title.x = element_blank(),
-        plot.margin = margin(t = 1, l = 0.2, r = 0.2, unit = "cm"))
+        plot.margin = margin(t = 1, l = 0.2, r = 0.2, unit = "cm"),
+        plot.title = element_text(vjust = 4,
+                                  color = "gray40",
+                                  hjust = 0.5))
 
-ggsave("../../figures/plots/normality_selections.pdf",
+p.exp1.selections
+
+ggsave(filename = "../../figures/plots/normality_selections.pdf",
+       plot = p.exp1.selections,
        width = 8,
        height = 6)
 ```
@@ -502,11 +509,11 @@ df.text = df.plot %>%
   mutate(label = str_c("n = ", n),
          judgment = 55)
 
-ggplot(data = df.plot,
-       mapping = aes(x = norm, 
-                     y = judgment,
-                     group = structure,
-                     fill = structure)) +
+p.exp1.judgments = ggplot(data = df.plot,
+                          mapping = aes(x = norm, 
+                                        y = judgment,
+                                        group = structure,
+                                        fill = structure)) +
   geom_hline(yintercept = 0, 
              linetype = 2) + 
   geom_point(mapping = aes(color = structure), 
@@ -545,7 +552,10 @@ ggplot(data = df.plot,
         axis.title.x = element_blank(),
         plot.margin = margin(t = 1, l = 0.2, r = 0.2, unit = "cm"))
 
-ggsave("../../figures/plots/normality_judgments.pdf",
+p.exp1.judgments
+
+ggsave(filename = "../../figures/plots/normality_judgments.pdf",
+       plot = p.exp1.judgments,
        width = 8,
        height = 6)
 ```
@@ -564,15 +574,15 @@ df.text = df.plot %>%
   mutate(judgment = 55,
          label = str_c("n = ", n))
 
-  ggplot(data = df.plot,
-         mapping = aes(x = selection, 
-                     y = judgment,
-                     group = structure,
-                     fill = structure)) +
+p.exp1.individual = ggplot(data = df.plot,
+                           mapping = aes(x = selection, 
+                                         y = judgment,
+                                         group = structure,
+                                         fill = structure)) +
   geom_hline(yintercept = 0, 
              linetype = 2) + 
   geom_point(mapping = aes(color = structure),
-    alpha = 0.2,
+             alpha = 0.2,
              size = 2,
              position = position_jitterdodge(jitter.width = 0.1,
                                              dodge.width = 0.5),
@@ -607,7 +617,10 @@ df.text = df.plot %>%
         axis.title.x = element_blank(),
         plot.margin = margin(t = 1, l = 0.2, r = 0.2, unit = "cm"))
 
-ggsave("../../figures/plots/normality_judgments_based_on_selections.pdf",
+p.exp1.individual  
+  
+ggsave(filename = "../../figures/plots/normality_judgments_based_on_selections.pdf",
+       plot = p.exp1.individual,
        width = 8,
        height = 6)
 ```
@@ -714,7 +727,7 @@ df.normality %>%
   select(norm, structure, everything()) %>% 
   arrange(desc(norm), structure) %>% 
   ungroup() %>% 
-  mutate_if(is.numeric, ~ round(.,2)) %>% 
+  mutate(across(where(is.numeric), ~ round(.,2))) %>% 
   print_table()
 ```
 
@@ -1120,7 +1133,7 @@ df.structure = df.stat_abnormal_judgments %>%
                cols = c(contains("disjunctive"), contains("conjunctive"))) %>% 
   pivot_wider(names_from = index,
               values_from = value) %>% 
-  mutate_at(vars(cause, abnormal, normal), ~ as.numeric(.)) %>% 
+  mutate(across(c(cause, abnormal, normal), ~ as.numeric(.))) %>% 
   mutate(selection = factor(selection, levels = c("abnormal", "normal")),
     structure = factor(structure, levels = c("conjunctive", "disjunctive")),
          norm = factor(norm, levels = c("statistical", "prescriptive")))
@@ -1201,7 +1214,7 @@ df.structure.demo %>%
             n_non_binary = sum(gender == "Non-binary"),
             mean_age = mean(age, na.rm = T),
             sd_age = sd(age, na.rm = T)) %>% 
-  mutate_at(vars(contains("age")), round) %>% 
+  mutate(across(contains("age"), round)) %>% 
   pivot_longer(cols = everything()) %>% 
   print_table()
 
@@ -1212,7 +1225,8 @@ rm(list = ls()[!ls() %in% c("df.normality",
                             "df.structure.demo",
                             "print_table",
                             "fit_normality_selection",
-                            "fit_normality_judgment")])
+                            "fit_normality_judgment",
+                            "p.exp1.selections")])
 ```
 
 ## Plots 
@@ -1226,7 +1240,7 @@ df.plot = df.structure %>%
          norm = factor(norm,
                        levels = c("statistical", "prescriptive"),
                        labels = c("statistical\nnorm", "prescriptive\nnorm")))
-  
+
 df.text = df.plot %>% 
   distinct(participant, norm) %>% 
   count(norm) %>% 
@@ -1240,11 +1254,11 @@ df.line = df.plot %>%
   ungroup() %>% 
   mutate(x = c(0.75, 1.25, 1.75, 2.25))
 
-p = ggplot(data = df.plot,
-           mapping = aes(x = norm, 
-                         y = selection,
-                         group = structure,
-                         fill = structure)) +
+p.exp2.selections = ggplot(data = df.plot,
+                           mapping = aes(x = norm, 
+                                         y = selection,
+                                         group = structure,
+                                         fill = structure)) +
   geom_hline(yintercept = 0.5, 
              linetype = 2) + 
   stat_summary(fun.data = "mean_cl_boot",
@@ -1253,15 +1267,13 @@ p = ggplot(data = df.plot,
                size = 1.5,
                shape = 21,
                alpha = 0) +
-  geom_point(mapping = aes(color = condition),
-             position = position_dodge(width = 0.5), 
-             alpha = 0, show.legend = FALSE) + 
   geom_text(data = df.text,
             mapping = aes(label = label),
             position = position_dodge(width = 0.5),
             size = 6) +
   labs(x = "type of norm",
-       y = "% abnormal cause selections") +
+       y = "% abnormal cause selections",
+       title = "Experiment 2") +
   scale_fill_brewer(palette = "Set1") +
   scale_y_continuous(breaks = seq(0, 1, 0.25),
                      labels = str_c(seq(0, 100, 25), "%"),
@@ -1272,25 +1284,31 @@ p = ggplot(data = df.plot,
         legend.position = "bottom",
         axis.title.x = element_blank(),
         axis.title.y = element_blank(),
-        plot.margin = margin(t = 1, l = 0.2, r = 0.2, unit = "cm"))
+        plot.margin = margin(t = 1, l = 0.2, r = 0.2, unit = "cm"),
+        plot.title = element_text(vjust = 4,
+                                  color = "gray40",
+                                  hjust = 0.5))
 
 # hack to link the dodged points:
 # https://stackoverflow.com/questions/51737201/how-to-draw-line-between-dodged-geometry-in-ggplot
 
-p + geom_line(data = layer_data(p, 2L),
-              mapping = aes(x = x,
-                            y = y,
-                            group = rep(1:2, 2),
-                            fill = NA),
-              size = 1,
-              linetype = 1) + 
+p.exp2.selections = p.exp2.selections + geom_line(data = layer_data(p.exp2.selections, 2L),
+                              mapping = aes(x = x,
+                                            y = y,
+                                            group = rep(1:2, 2),
+                                            fill = NA),
+                              size = 1,
+                              linetype = 1) + 
   stat_summary(fun.data = "mean_cl_boot",
                geom = "pointrange",
                position = position_dodge(width = 0.5),
                size = 1.5,
                shape = 21)
 
-ggsave("../../figures/plots/structure_selections.pdf",
+p.exp2.selections
+
+ggsave(filename = "../../figures/plots/structure_selections.pdf",
+       plot = p.exp2.selections,
        width = 8,
        height = 6)
 ```
@@ -1313,7 +1331,7 @@ df.text = df.plot %>%
   mutate(label = str_c("n = ", n),
          judgment = 55)
 
-ggplot(data = df.plot,
+p.exp2.judgments = ggplot(data = df.plot,
        mapping = aes(x = norm, 
                      y = judgment,
                      group = explanation,
@@ -1382,15 +1400,15 @@ df.text = df.plot %>%
          label = str_c("n = ", n),
          explanation = NA)
 
-  ggplot(data = df.plot,
-         mapping = aes(x = selection, 
-                     y = judgment,
-                     group = explanation,
-                     fill = explanation)) +
+p.exp2.individual = ggplot(data = df.plot,
+                           mapping = aes(x = selection, 
+                                         y = judgment,
+                                         group = explanation,
+                                         fill = explanation)) +
   geom_hline(yintercept = 0, 
              linetype = 2) + 
   geom_point(mapping = aes(color = explanation),
-    alpha = 0.2,
+             alpha = 0.2,
              size = 2,
              position = position_jitterdodge(jitter.width = 0.1,
                                              dodge.width = 0.5),
@@ -1425,7 +1443,10 @@ df.text = df.plot %>%
         axis.title.x = element_text(margin = margin(t = 0.5, unit = "cm")),
         plot.margin = margin(t = 1, l = 0.2, r = 0.2, unit = "cm"))
 
-ggsave("../../figures/plots/structure_judgments_based_on_selections.pdf",
+p.exp2.individual
+
+ggsave(filename = "../../figures/plots/structure_judgments_based_on_selections.pdf",
+       plot = p.exp2.individual,
        width = 8,
        height = 6)
 ```
@@ -1550,7 +1571,7 @@ df.structure %>%
   mutate(difference = judgment_abnormal - judgment_normal,
          n = n_abnormal + n_normal) %>% 
   select(-c(n_abnormal, n_normal)) %>% 
-  mutate_if(is.numeric, ~ round(., 2)) %>% 
+  mutate(across(where(is.numeric), ~ round(., 2))) %>% 
   print_table()
 ```
 
@@ -1739,6 +1760,20 @@ pwr.anova.test(k = 2,
                f = aov_structure_judgment$`F value`[1])
 ```
 
+# Combined plots 
+
+## Selections 
+
+```{r fig.height=6, fig.width=16}
+p.exp1.selections + p.exp2.selections + 
+  plot_annotation(tag_levels = "A") & 
+  theme(plot.tag = element_text(face = "bold"),
+        plot.margin = margin(t = 0.1, r = 0.1, l = 0.1, b = 0, unit = "cm"))
+
+ggsave(filename = "../../figures/plots/selections.pdf",
+       width = 16,
+       height = 6)
+```
 
 # Session Info 
 
